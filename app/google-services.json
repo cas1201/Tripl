@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "815990141975",
+    "project_id": "tfg-sal-tripl",
+    "storage_bucket": "tfg-sal-tripl.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:815990141975:android:ab8913d5eae12de3cd9852",
+        "android_client_info": {
+          "package_name": "tfg.sal.tripl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "815990141975-o13tj3nhl19vpmmq4c8fthm7e8tu3r6j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tfg.sal.tripl",
+            "certificate_hash": "1645c2e388ac36bab0b61e471deff63920b98252"
+          }
+        },
+        {
+          "client_id": "815990141975-2gl7gu98q8phs5dbq17ivs7bebo7bl03.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUnfJ9wBgZ8v6ke3XcQs-J_C5bq5tk5XE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "815990141975-2gl7gu98q8phs5dbq17ivs7bebo7bl03.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
