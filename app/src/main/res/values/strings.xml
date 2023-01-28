@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">Tripl</string>
+    <string name="app_name" translatable="false">Tripl</string>
 
     <string name="close">Cerrar</string>
     <string name="name">Nombre</string>
     <string name="surname">Apellidos</string>
-    <string name="email">Email</string>
+    <string name="email" translatable="false">Email</string>
     <string name="password">Contraseña</string>
     <string name="forgot_password">¿Olvidaste la contraseña?</string>
     <string name="recover_password">Recuperar contraseña</string>
@@ -12,17 +12,17 @@
     <string name="signup">Registrarse</string>
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
-    <string name="logo">Logo</string>
+    <string name="logo" translatable="false">Logo</string>
     <string name="no_account">¿No tienes una cuenta?</string>
     <string name="signin_with">acceder con</string>
-    <string name="social_login_google">Google social login</string>
-    <string name="social_login_facebook">Facebook social login</string>
+    <string name="social_login_google" translatable="false">Google social login</string>
+    <string name="social_login_facebook" translatable="false">Facebook social login</string>
     <string name="home">Inicio</string>
     <string name="trip">Viajes</string>
     <string name="profile">Perfil</string>
     <string name="back">Atrás</string>
     <string name="repeat_password">Repetir contraseña</string>
-    <string name="google_web_client_id">815990141975–2gl7gu98q8phs5dbq17ivs7bebo7bl03.apps.googleusercontent.com</string>
+    <string name="google_web_client_id" translatable="false">815990141975–2gl7gu98q8phs5dbq17ivs7bebo7bl03.apps.googleusercontent.com</string>
     <string name="manage_your_account">Gestionar tu cuenta</string>
     <string name="profile_details">Detalles de perfil</string>
     <string name="settings">Ajustes</string>
@@ -40,16 +40,16 @@
     <string name="signup_error">Error al crear el usuario, inténtelo de nuevo</string>
     <string name="recover_password_error">Error al enviar mail de recuperación de contraseña</string>
     <string name="recover_password_success">Email de recuperación de contraseña enviado!</string>
-    <string name="your_details">Tus detalles</string>
+    <string name="your_details">Detalles de usuario</string>
     <string name="login_info">Información de inicio de sesión</string>
     <string name="traveler_info">Información de viajero</string>
     <string name="payments">Pagos</string>
     <string name="log_out">Cerrar sesión</string>
     <string name="forward">Adelante</string>
     <string name="email_address">Dirección de correo electrónico</string>
-    <string name="web_client_id">815990141975–2gl7gu98q8phs5dbq17ivs7bebo7bl03.apps.googleusercontent.com</string>
-    <string name="trailing_icon">Trailing icon</string>
-    <string name="menu">Menu</string>
+    <string name="web_client_id" translatable="false">815990141975–2gl7gu98q8phs5dbq17ivs7bebo7bl03.apps.googleusercontent.com</string>
+    <string name="trailing_icon" translatable="false">Trailing icon</string>
+    <string name="menu" translatable="false">Menu</string>
     <string name="save_itinerary">Guardar itinerario</string>
     <string name="amount">Cantidad Puntos de Interés</string>
     <string name="amount_label">(máx. 100)</string>
@@ -57,17 +57,19 @@
     <string name="type">Tipo</string>
     <string name="distance">Distancia</string>
     <string name="save_filters">Guardar filtros</string>
-    <string name="rating_1">1</string>
-    <string name="rating_2">2</string>
-    <string name="rating_3">3</string>
+    <string name="rating_1" translatable="false">1</string>
+    <string name="rating_2" translatable="false">2</string>
+    <string name="rating_3" translatable="false">3</string>
     <string name="ratingStar">Estrella de valoración</string>
     <string name="industrial_facilities">Complejos industriales</string>
-    <string name="industrial_facilities_tag">industrial_facilities</string>
+    <string name="industrial_facilities_tag" translatable="false">industrial_facilities</string>
     <string name="architecture">Arquitectura</string>
-    <string name="cultural">Cultural</string>
+    <string name="cultural" translatable="false">Cultural</string>
     <string name="natural">Naturaleza</string>
-    <string name="religion">Religion</string>
+    <string name="religion" translatable="false">Religion</string>
     <string name="other">Otro</string>
     <string name="hide_menu">Cerrar</string>
     <string name="no_saved_itineraries">Vaya, no se han encontrado itinerarios guardados…</string>
+    <string name="support_content">Para consultas contactar al equipo de soporte mediante la dirección de correo:</string>
+    <string name="support_email" translatable="false">aragones.lozano@gmail.com</string>
 </resources>

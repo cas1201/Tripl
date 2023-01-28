@@ -1,5 +1,6 @@
 package tfg.sal.tripl.appcontent.home.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -48,6 +49,7 @@ import tfg.sal.tripl.appcontent.login.ui.TriplTextField
 import tfg.sal.tripl.appcontent.login.ui.headerText
 import tfg.sal.tripl.core.Routes
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,

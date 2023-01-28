@@ -1,5 +1,6 @@
 package tfg.sal.tripl.appcontent.profile.ui
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -28,6 +29,7 @@ import tfg.sal.tripl.theme.PrimaryColorDay
 import tfg.sal.tripl.theme.PrimaryColorNight
 import tfg.sal.tripl.theme.SecondaryColor
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,

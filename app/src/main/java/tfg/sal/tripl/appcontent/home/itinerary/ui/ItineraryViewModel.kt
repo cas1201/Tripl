@@ -32,10 +32,10 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     private val types = mutableMapOf<String, Boolean>()
 
     private val _destinationCountry = MutableLiveData<String>()
-    val destinationCountry: LiveData<String> = _destinationCountry
+    private val destinationCountry: LiveData<String> = _destinationCountry
 
     private val _destinationCity = MutableLiveData<String>()
-    val destinationCity: LiveData<String> = _destinationCity
+    private val destinationCity: LiveData<String> = _destinationCity
 
     private val _dropDownMenuExpanded = MutableLiveData<Boolean>()
     val dropDownMenuExpanded: LiveData<Boolean> = _dropDownMenuExpanded
