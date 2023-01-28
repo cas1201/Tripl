@@ -22,7 +22,7 @@ import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseUser
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.login.data.network.FireBaseAuthResource
-import tfg.sal.tripl.appcontent.login.data.network.FireBaseViewModel
+import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.login.ui.*
 import tfg.sal.tripl.theme.SecondaryColor
 

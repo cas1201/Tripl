@@ -4,6 +4,7 @@ buildscript {
         mavenCentral() // New line
 
         // NOTE: Keep any other entries you may have had here
+        gradlePluginPortal()
     }
     ext {
         compose_version = '1.3.0'

@@ -10,7 +10,7 @@ class OpenTripMapService @Inject constructor(private val openTripMapClient: Open
     private val format = "json"
     private val lang = "en"
 
-    suspend fun getPOIList(radius: Double, lat: Double, lon: Double): PointsOfInterest {
+    suspend fun getPOIList(radius: Float, lat: Double, lon: Double): PointsOfInterest {
         return withContext(Dispatchers.IO) {
             val response = openTripMapClient.getPOIList(format, lang, radius, lat, lon, apikey)
             PointsOfInterest(response.body())

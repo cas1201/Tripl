@@ -10,7 +10,7 @@ interface OpenTripMapClient {
     suspend fun getPOIList(
         @Query("format") format: String,
         @Query("lang") lang: String,
-        @Query("radius") radius: Double,
+        @Query("radius") radius: Float,
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("apikey") apikey: String

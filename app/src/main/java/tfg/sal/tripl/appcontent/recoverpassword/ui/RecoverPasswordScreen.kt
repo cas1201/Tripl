@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.login.data.network.FireBaseAuthResource
-import tfg.sal.tripl.appcontent.login.data.network.FireBaseViewModel
+import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.TriplTextField
 import tfg.sal.tripl.appcontent.login.ui.appLogo

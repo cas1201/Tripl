@@ -7,52 +7,53 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.CameraPositionState
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.Translator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import tfg.sal.tripl.appcontent.home.data.countries.Countries
-import tfg.sal.tripl.appcontent.home.data.network.response.POIResponse
-import tfg.sal.tripl.appcontent.home.data.poi.PointsOfInterest
-import tfg.sal.tripl.appcontent.home.domain.CountriesUseCase
-import tfg.sal.tripl.appcontent.home.domain.POIUseCase
+import tfg.sal.tripl.appcontent.home.domain.CapitalCityUseCase
+import tfg.sal.tripl.appcontent.home.domain.CoordinatesUseCase
+import tfg.sal.tripl.appcontent.home.itinerary.ui.ItineraryViewModel
 import tfg.sal.tripl.core.Routes
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.math.sqrt
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val countriesUseCase: CountriesUseCase,
-    private val poiUseCase: POIUseCase,
+    private val coordinatesUseCase: CoordinatesUseCase,
+    private val capitalCityUseCase: CapitalCityUseCase,
     @Named("EnEsTranslator") private val enesTranslator: Translator,
     @Named("EsEnTranslator") private val esenTranslator: Translator,
     private val downloadConditions: DownloadConditions
 ) : ViewModel() {
 
-    private val _destination = MutableLiveData<String>()
-    val destination: LiveData<String> = _destination
+    private val _destinationCountry = MutableLiveData<String>()
+    val destinationCountry: LiveData<String> = _destinationCountry
+
+    private val _destinationCountryIso = MutableLiveData<String>()
+    val destinationCountryIso: LiveData<String> = _destinationCountryIso
+
+    private val _destinationCity = MutableLiveData<String>()
+    val destinationCity: LiveData<String> = _destinationCity
 
     private val _countries = MutableLiveData<Countries>()
     val countries: LiveData<Countries> = _countries
 
-    private val _countryNames = MutableLiveData<List<String>>()
-    val countryNames: LiveData<List<String>> = _countryNames
+    private val _expandedCountries = MutableLiveData<Boolean>()
+    val expandedCountries: LiveData<Boolean> = _expandedCountries
 
-    private val _countryFlags = MutableLiveData<List<Map<String, String>>>()
-    val countryFlags: LiveData<List<Map<String, String>>> = _countryFlags
-
-    private val _suggestedFlags = MutableLiveData<List<Map<String, String>>>()
-    val suggestedFlags: LiveData<List<Map<String, String>>> = _suggestedFlags
-
-    private val _expanded = MutableLiveData<Boolean>()
-    val expanded: LiveData<Boolean> = _expanded
+    private val _expandedCities = MutableLiveData<Boolean>()
+    val expandedCities: LiveData<Boolean> = _expandedCities
 
     private val _interactionSource = MutableLiveData<MutableInteractionSource>()
     val interactionSource: LiveData<MutableInteractionSource> = _interactionSource
+
+    /*private val _countryFlags = MutableLiveData<List<Map<String, String>>>()
+    val countryFlags: LiveData<List<Map<String, String>>> = _countryFlags
+
+    private val _suggestedFlags = MutableLiveData<List<Map<String, String>>>()
+    val suggestedFlags: LiveData<List<Map<String, String>>> = _suggestedFlags*/
 
     /*private val _startDate = MutableLiveData<String>()
     val startDate: LiveData<String> = _startDate
@@ -60,56 +61,93 @@ class HomeViewModel @Inject constructor(
     private val _endDate = MutableLiveData<String>()
     val endDate: LiveData<String> = _endDate*/
 
-    fun setCountriesValue(countries: Countries) {
+    suspend fun setCountriesValue(countries: Countries) {
         _countries.value = countries
     }
 
-    fun setCountryNamesValue(names: List<String>) {
-        _countryNames.value = names
-    }
-
-    fun setCountryFlagsValue(flags: List<Map<String, String>>) {
-        _countryFlags.value = flags
-    }
-
-    fun setSuggestedFlags() {
+    /*fun setSuggestedFlags() {
         _suggestedFlags.value = countryFlags.value?.shuffled()?.take(5)
+    }*/
+
+    fun onSelectedCountryTextChange(selectedText: String) {
+        _expandedCountries.value = true
+        _destinationCountry.value = selectedText
     }
 
-    fun onSelectedTextChange(selectedText: String) {
-        _expanded.value = true
-        _destination.value = selectedText
+    fun onSelectedCityTextChange(selectedText: String) {
+        _expandedCities.value = true
+        _destinationCity.value = selectedText
     }
 
-    fun onExpandedChange(expanded: Boolean) {
-        _expanded.value = expanded
+    fun onExpandedCountriesChange(expanded: Boolean) {
+        _expandedCountries.value = expanded
+    }
+
+    fun onExpandedCitiesChange(expanded: Boolean) {
+        _expandedCities.value = expanded
     }
 
     fun clearTextField() {
-        _destination.value = ""
+        _destinationCountry.value = ""
+        _destinationCity.value = ""
     }
 
-    fun onSearchTrip(navigationController: NavHostController, cardDestination: String? = null) {
-        val validateDestination = destinationValidation(_destination.value)
+    fun onSearchTrip(
+        navigationController: NavHostController,
+        itineraryViewModel: ItineraryViewModel,
+        cardDestination: String? = null
+    ) {
+        val validateDestination = destinationValidation()
+        viewModelScope.launch {
+            if (cardDestination == null) {
+                if (validateDestination) {
 
-        if (cardDestination != null) {
-            _destination.value = cardDestination
-            navigationController.navigate(Routes.ItineraryScreen.route) {
-                popUpTo(Routes.HomeScreen.route) { inclusive = true }
-            }
-        } else {
-            if (validateDestination) {
-                navigationController.navigate(Routes.ItineraryScreen.route) {
-                    popUpTo(Routes.HomeScreen.route) { inclusive = true }
+                    val capitalCity = capitalCityUseCase("ES")
+                    val coordinates = coordinatesUseCase(
+                        destinationCity.value!!,
+                        destinationCountryIso.value!!
+                    )
+                    itineraryViewModel.getPOI(coordinates)
+                    navigationController.navigate(Routes.ItineraryScreen.route) {
+                        popUpTo(Routes.HomeScreen.route) { inclusive = true }
+                    }
+                } else {
+                    Log.i("Validaciones", "NO SE HA SELECCIONADO DESTINO O NO ES VÁLIDO")
                 }
             } else {
-                Log.i("Validaciones", "NO SE HA SELECCIONADO DESTINO O NO ES VÁLIDO")
+                _destinationCountry.value = cardDestination
+                Log.i("Validaciones", "Entrada por 'CardDestination'")
+                /*navigationController.navigate(Routes.ItineraryScreen.route) {
+                    popUpTo(Routes.HomeScreen.route) { inclusive = true }
+                }*/
             }
         }
     }
 
-    private fun destinationValidation(destination: String?): Boolean {
-        return destination != null && destination != "" && countryNames.value?.contains(destination) == true
+    private fun destinationValidation(): Boolean {
+        var country = false
+        var city = false
+        var valid = false
+
+        if (destinationCountry.value != null && destinationCountry.value != "") {
+            countries.value?.countries?.countriesData?.forEach {
+                if (it.countryName == destinationCountry.value) {
+                    _destinationCountryIso.value = it.countryIso
+                    country = true
+                }
+            }
+        }
+        if (destinationCity.value != null && destinationCity.value != "") {
+            countries.value?.countries?.countriesData?.forEach {
+                if (it.countryCities.contains(destinationCity.value)) {
+                    city = true
+                }
+            }
+        }
+        if (country && city) {
+            valid = true
+        }
+        return valid
     }
 
     fun translateToSpanish(text: String): String {

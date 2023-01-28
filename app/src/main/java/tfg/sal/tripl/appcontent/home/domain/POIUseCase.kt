@@ -5,7 +5,7 @@ import tfg.sal.tripl.appcontent.home.data.poi.PointsOfInterest
 import javax.inject.Inject
 
 class POIUseCase @Inject constructor(private val repository: OpenTripMapRepository) {
-    suspend operator fun invoke(radius: Double, lat: Double, lon: Double): PointsOfInterest {
+    suspend operator fun invoke(radius: Float, lat: Double, lon: Double): PointsOfInterest {
         return repository.getPOIList(radius, lat, lon)
     }
 }

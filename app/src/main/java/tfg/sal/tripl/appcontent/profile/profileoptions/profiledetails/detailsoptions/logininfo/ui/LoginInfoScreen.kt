@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseUser
 import tfg.sal.tripl.R
-import tfg.sal.tripl.appcontent.login.data.network.FireBaseViewModel
+import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.BackHeader
 import tfg.sal.tripl.theme.PrimaryColorDay
 import tfg.sal.tripl.theme.PrimaryColorNight

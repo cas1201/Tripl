@@ -88,11 +88,12 @@ dependencies {
     kapt "androidx.room:room-compiler-processing:$room_version"
     // Traductor
     implementation 'com.google.mlkit:translate:17.0.1'
-    // Coil URL images
+    // URL images
     implementation "io.coil-kt:coil-compose:2.2.2"
+    implementation "io.coil-kt:coil-svg:2.2.2"
     //Maps
     implementation 'com.google.maps.android:maps-compose:2.7.2'
-    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
 
     // Default

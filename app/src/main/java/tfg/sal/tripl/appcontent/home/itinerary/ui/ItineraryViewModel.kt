@@ -1,7 +1,10 @@
 package tfg.sal.tripl.appcontent.home.itinerary.ui
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,15 +15,16 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import tfg.sal.tripl.R
-import tfg.sal.tripl.appcontent.home.data.countries.Countries
+import tfg.sal.tripl.appcontent.home.data.countries.Coordinates
 import tfg.sal.tripl.appcontent.home.data.network.response.POIResponse
 import tfg.sal.tripl.appcontent.home.data.poi.PointsOfInterest
 import tfg.sal.tripl.appcontent.home.domain.POIUseCase
 import tfg.sal.tripl.appcontent.home.itinerary.data.POITypes
 import tfg.sal.tripl.appcontent.home.ui.HomeViewModel
+import tfg.sal.tripl.appcontent.trip.ui.TripViewModel
 import tfg.sal.tripl.core.Routes
 import javax.inject.Inject
+import kotlin.math.pow
 import kotlin.math.sqrt
 
 @HiltViewModel
@@ -78,7 +82,8 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     private val _cps = MutableLiveData<CameraPositionState>()
     val cps: LiveData<CameraPositionState> = _cps
 
-    fun onBackPressed(navigationController: NavHostController) {
+    fun onBackPressed(homeViewModel: HomeViewModel, navigationController: NavHostController) {
+        homeViewModel.clearTextField()
         navigationController.navigate(Routes.HomeScreen.route) {
             popUpTo(Routes.HomeScreen.route) { inclusive = true }
         }
@@ -88,11 +93,37 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         _dropDownMenuExpanded.value = expanded
     }
 
+    fun setFilters() {
+        if (poisAmount.value == null) {
+            _poisAmount.value = "5"
+        }
+        if (poisRating.value == null) {
+            _poisRating.value = -1
+        }
+        if (typeStatus.value == null) {
+            _typeStatus.value = mapOf()
+        }
+        if (poisDistance.value == null) {
+            _poisDistance.value = 25f
+        }
+    }
+
     fun onAmountChange(amount: String) {
-        if (amount.toInt() > 50) {
-            _poisAmount.value = "50"
+        val regex = "[0-9]*".toRegex()
+        if (amount != "") {
+            if (regex.matches(amount)) {
+                if (amount.toInt() < 1) {
+                    _poisAmount.value = "1"
+                } else if (amount.toInt() > 100) {
+                    _poisAmount.value = "100"
+                } else {
+                    _poisAmount.value = amount
+                }
+            } else {
+                _poisAmount.value = regex.find(amount)?.value
+            }
         } else {
-            _poisAmount.value = amount
+            _poisAmount.value = ""
         }
     }
 
@@ -135,58 +166,53 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         Log.i("distancealert", "${poisDistance.value}")
     }
 
-    fun getPOI(countries: Countries, destination: String) {
+    fun getPOI(coordinates: Coordinates) {
+        val coord = coordinates.coordinates
         viewModelScope.launch {
-            countries.countries?.forEach {
-                if (it.name.common == destination) {
-                    val countryArea = it.area
-                    val countryLat = it.coordinates[0]
-                    val countryLon = it.coordinates[1]
-                    val getPois = poiUseCase(
-                        sqrt((countryArea * 1000000) / Math.PI),
-                        countryLat,
-                        countryLon
-                    )
-                    _pois.value = getPois
-                }
+            if (coord != null && coord.isNotEmpty()) {
+                val getPois = poiUseCase(
+                    poisDistance.value!! * 1000,
+                    coord[0].lat,
+                    coord[0].lon
+                )
+                _pois.value = getPois
+            } else {
+                Log.i("error", "Coordenadas (itineraryvm linea 177)")
+                //error por coordenadas
             }
             if (pois.value != null) {
-                _filteredPois.value = pois.value?.pois?.shuffled()?.take(5)
+                filterPOI()
                 _poiMarkerCoordinates.value = getPoisMarkerCoordinates(filteredPois.value)
                 _filteredPoisCameraPosition.value = calculateMidPoint(filteredPois.value)
                 setCameraPosition()
                 _showMap.value = true
-            } //============================================== Meter mensaje de error al consultar los pois
+            } else {
+                //error consultando pois
+            }
         }
     }
 
+
     fun filterPOI() {
+        if (poisAmount.value == "") {
+            _poisAmount.value = "1"
+        }
         val fPois = mutableListOf<POIResponse>()
-        if (poisAmount.value == null) {
-            _poisAmount.value = "5"
-        }
-        if (poisRating.value == null) {
-            _poisRating.value = -1
-        }
-        if (typeStatus.value == null) {
-            _typeStatus.value = mapOf()
-        }
-        if (poisDistance.value == null) {
-            _poisDistance.value = 1f
-        }
         pois.value?.pois?.forEach {
-            if (typeStatus.value?.isEmpty() == true) {
-                if (it.distance / 1000 <= poisDistance.value!!) {
-                    fPois.add(it)
-                }
-            } else {
-                typeStatus.value?.forEach { type ->
-                    if (
-                        type.value
-                        && it.kinds.split(",").contains(type.key)
-                        && it.distance / 1000 <= poisDistance.value!!
-                    ) {
+            if (it.name != "") {
+                if (typeStatus.value?.isEmpty() == true) {
+                    if (it.distance <= poisDistance.value!! * 1000) {
                         fPois.add(it)
+                    }
+                } else {
+                    typeStatus.value?.forEach { type ->
+                        if (
+                            type.value
+                            && it.kinds.split(",").contains(type.key)
+                            && it.distance <= poisDistance.value!! * 1000
+                        ) {
+                            fPois.add(it)
+                        }
                     }
                 }
             }
@@ -194,8 +220,24 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         if (poisRating.value!! > 0) {
             fPois.removeAll { it.rate != poisRating.value }
         }
-        _filteredPois.value = fPois.shuffled().take(poisAmount.value?.toInt()!!)
-        Log.i("filtros", "${filteredPois.value}")
+        val fPoisShuffled = fPois.shuffled().take(poisAmount.value?.toInt()!!)
+        val initialPoi = fPoisShuffled.sortedBy {
+            sqrt((it.location.latPoint - 0).pow(2) + (it.location.lonPoint - 0).pow(2))
+        }.first()
+        var fPoisOrdered = fPoisShuffled.sortedBy {
+            sqrt(
+                (it.location.latPoint - initialPoi.location.lonPoint).pow(2)
+                        + (it.location.lonPoint - initialPoi.location.lonPoint).pow(2)
+            )
+        }
+        _filteredPois.value = fPoisOrdered
+        _poiMarkerCoordinates.value = getPoisMarkerCoordinates(filteredPois.value)
+    }
+
+    fun searchPoi(context: Context, poiName: String) {
+        val openURL = Intent(Intent.ACTION_VIEW)
+        openURL.data = Uri.parse("https://www.google.com/search?q=$poiName")
+        startActivity(context, openURL, null)
     }
 
     private fun getPoisMarkerCoordinates(pois: List<POIResponse>?): List<LatLng> {
@@ -234,10 +276,21 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         }
     }
 
-    fun onItinerarySave(homeViewModel: HomeViewModel, navigationController: NavHostController) {
+    fun onItinerarySave(
+        homeViewModel: HomeViewModel,
+        tripViewModel: TripViewModel,
+        navigationController: NavHostController
+    ) {
+        tripViewModel.saveItinerary(
+            filteredPois.value,
+            poiMarkerCoordinates.value,
+            cps.value,
+            homeViewModel.destinationCountry.value,
+            homeViewModel.destinationCity.value
+        )
+        homeViewModel.clearTextField()
         navigationController.navigate(Routes.TripScreen.route) {
             popUpTo(Routes.TripScreen.route) { inclusive = true }
         }
-        homeViewModel.clearTextField()
     }
 }

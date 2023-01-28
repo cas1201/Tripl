@@ -3,7 +3,7 @@ package tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import tfg.sal.tripl.R
-import tfg.sal.tripl.appcontent.login.data.network.FireBaseViewModel
+import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.core.Routes
 
 class ProfileDetailsViewModel : ViewModel() {

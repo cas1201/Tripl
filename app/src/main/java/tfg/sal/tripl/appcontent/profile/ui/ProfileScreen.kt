@@ -21,7 +21,7 @@ import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseUser
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.ui.BottomNav
-import tfg.sal.tripl.appcontent.login.data.network.FireBaseViewModel
+import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.login.ui.headerText
 import tfg.sal.tripl.appcontent.profile.domain.GridModal
 import tfg.sal.tripl.theme.PrimaryColorDay

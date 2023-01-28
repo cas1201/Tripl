@@ -6,7 +6,7 @@ import tfg.sal.tripl.appcontent.home.data.countries.Countries
 import javax.inject.Inject
 
 class CountriesService @Inject constructor(private val countriesClient: CountriesClient) {
-    private val url = "https://restcountries.com/v3.1/all"
+    private val url = "https://countriesnow.space/api/v0.1/countries"
 
     suspend fun getCountriesList(): Countries {
         return withContext(Dispatchers.IO) {

@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".TriplApp"
@@ -18,7 +20,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAYk7lMFAb_tZjVD1zcDlipBE-LyA4PqSI" />
+            android:value="AIzaSyBT3-NYS-aWR9yCSifSKEgOYZQVnajtoC8" />
 
         <activity
             android:name=".MainActivity"

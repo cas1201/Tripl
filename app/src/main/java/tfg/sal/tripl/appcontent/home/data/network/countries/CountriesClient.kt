@@ -7,5 +7,5 @@ import tfg.sal.tripl.appcontent.home.data.network.response.CountriesResponse
 
 interface CountriesClient {
     @GET
-    suspend fun getCountriesList(@Url url: String): Response<List<CountriesResponse>>
+    suspend fun getCountriesList(@Url url: String): Response<CountriesResponse>
 }

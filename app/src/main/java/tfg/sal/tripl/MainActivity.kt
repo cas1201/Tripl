@@ -1,7 +1,6 @@
 package tfg.sal.tripl
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -17,7 +16,7 @@ import tfg.sal.tripl.appcontent.home.itinerary.ui.ItineraryScreen
 import tfg.sal.tripl.appcontent.home.itinerary.ui.ItineraryViewModel
 import tfg.sal.tripl.appcontent.home.ui.HomeScreen
 import tfg.sal.tripl.appcontent.home.ui.HomeViewModel
-import tfg.sal.tripl.appcontent.login.data.network.FireBaseViewModel
+import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.login.ui.LoginScreen
 import tfg.sal.tripl.appcontent.login.ui.LoginViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.preferences.ui.PreferencesScreen
@@ -121,6 +120,7 @@ class MainActivity : ComponentActivity() {
                             ItineraryScreen(
                                 itineraryViewModel,
                                 homeViewModel,
+                                tripViewModel,
                                 navigationController
                             )
                         }
@@ -128,6 +128,7 @@ class MainActivity : ComponentActivity() {
                             TripScreen(
                                 tripViewModel,
                                 fireBaseViewModel,
+                                itineraryViewModel,
                                 navigationController
                             )
                         }

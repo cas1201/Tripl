@@ -28,7 +28,8 @@
     <string name="settings">Ajustes</string>
     <string name="support">Soporte</string>
     <string name="preferences">Preferencias</string>
-    <string name="destination">Destino</string>
+    <string name="destination_country">País de destino</string>
+    <string name="destination_city">Ciudad de destino</string>
     <string name="destination_not_found">Destino no encontrado</string>
     <string name="start_date">Fecha inicio</string>
     <string name="end_date">Fecha fin</string>
@@ -51,7 +52,7 @@
     <string name="menu">Menu</string>
     <string name="save_itinerary">Guardar itinerario</string>
     <string name="amount">Cantidad Puntos de Interés</string>
-    <string name="amount_label">(máx. 50)</string>
+    <string name="amount_label">(máx. 100)</string>
     <string name="rating">Valoración</string>
     <string name="type">Tipo</string>
     <string name="distance">Distancia</string>

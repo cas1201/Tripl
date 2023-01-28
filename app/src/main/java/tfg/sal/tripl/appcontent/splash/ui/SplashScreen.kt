@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.ui.HomeViewModel
-import tfg.sal.tripl.appcontent.login.data.network.FireBaseViewModel
+import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.theme.SecondaryColor
 
 @Composable
@@ -31,7 +31,7 @@ fun SplashScreen(
     val continueToHome: Boolean by viewModel.continueToHome.observeAsState(initial = false)
 
     viewModel.getCountries(homeViewModel)
-    homeViewModel.setSuggestedFlags()
+    //homeViewModel.setSuggestedFlags()
 
     LaunchedEffect(key1 = continueToHome) {
         viewModel.initializeUser(

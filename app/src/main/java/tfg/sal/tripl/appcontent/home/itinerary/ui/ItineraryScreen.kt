@@ -1,6 +1,5 @@
 package tfg.sal.tripl.appcontent.home.itinerary.ui
 
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -13,7 +12,8 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +31,7 @@ import tfg.sal.tripl.appcontent.home.ui.HomeViewModel
 import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.TriplTextField
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.Divisor
+import tfg.sal.tripl.appcontent.trip.ui.TripViewModel
 import tfg.sal.tripl.theme.MapsTrackColor
 import tfg.sal.tripl.theme.SecondaryColor
 
@@ -38,15 +39,16 @@ import tfg.sal.tripl.theme.SecondaryColor
 fun ItineraryScreen(
     viewModel: ItineraryViewModel,
     homeViewModel: HomeViewModel,
+    tripViewModel: TripViewModel,
     navigationController: NavHostController
 ) {
     val poisAmount: String by viewModel.poisAmount.observeAsState(initial = "")
-    val poisRating: Int by viewModel.poisRating.observeAsState(initial = 0)
-    val poisDistance: Float by viewModel.poisDistance.observeAsState(initial = 1f)
+    val poisRating: Int by viewModel.poisRating.observeAsState(initial = -1)
+    val poisDistance: Float by viewModel.poisDistance.observeAsState(initial = 25f)
     val showMap: Boolean by viewModel.showMap.observeAsState(initial = false)
 
     BackHandler {
-        viewModel.onBackPressed(navigationController)
+        viewModel.onBackPressed(homeViewModel, navigationController)
     }
 
     val scaffoldState = rememberScaffoldState()
@@ -56,6 +58,7 @@ fun ItineraryScreen(
             topBar = {
                 ItineraryHeader(
                     viewModel = viewModel,
+                    homeViewModel = homeViewModel,
                     poisAmount = poisAmount,
                     poisRating = poisRating,
                     poisDistance = poisDistance,
@@ -66,7 +69,13 @@ fun ItineraryScreen(
                 ItineraryMap(viewModel = viewModel)
             },
             bottomBar = {
-                ItinerarySave { viewModel.onItinerarySave(homeViewModel, navigationController) }
+                ItinerarySave {
+                    viewModel.onItinerarySave(
+                        homeViewModel,
+                        tripViewModel,
+                        navigationController
+                    )
+                }
             }
         )
     } else {
@@ -79,6 +88,7 @@ fun ItineraryScreen(
 @Composable
 fun ItineraryHeader(
     viewModel: ItineraryViewModel,
+    homeViewModel: HomeViewModel,
     poisAmount: String,
     poisRating: Int,
     poisDistance: Float,
@@ -101,7 +111,7 @@ fun ItineraryHeader(
                 contentDescription = stringResource(id = R.string.back),
                 modifier = Modifier
                     .padding(16.dp)
-                    .clickable { viewModel.onBackPressed(navigationController) }
+                    .clickable { viewModel.onBackPressed(homeViewModel, navigationController) }
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(
@@ -174,12 +184,16 @@ fun ItineraryHeader(
                                                 .width(200.dp)
                                                 .height(10.dp),
                                             value = poisDistance,
-                                            valueRange = 1f..5000f,
+                                            valueRange = 1f..10000f,
                                             onValueChange = {
                                                 viewModel.onDistanceChange(it)
                                             }
                                         )
-                                        Spacer(modifier = Modifier.padding(4.dp).weight(1f))
+                                        Spacer(
+                                            modifier = Modifier
+                                                .padding(4.dp)
+                                                .weight(1f)
+                                        )
                                         Text(text = poisDistance.toInt().toString() + " Km")
                                     }
                                 }
@@ -237,7 +251,12 @@ fun typeCheckBox(types: List<POITypes>, viewModel: ItineraryViewModel) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
                     checked = status[poitypes.ordinal]!!,
-                    onCheckedChange = { viewModel.onTypeChange(poitypes.ordinal, !status[poitypes.ordinal]!!) }
+                    onCheckedChange = {
+                        viewModel.onTypeChange(
+                            poitypes.ordinal,
+                            !status[poitypes.ordinal]!!
+                        )
+                    }
                 )
                 Spacer(modifier = Modifier.padding(4.dp))
                 Text(text = poitypes.name)
@@ -253,6 +272,7 @@ fun ItineraryMap(
     val poiMarkerCoordinates: List<LatLng> by viewModel.poiMarkerCoordinates.observeAsState(initial = listOf())
     val filteredPois: List<POIResponse> by viewModel.filteredPois.observeAsState(initial = listOf())
     val cameraPositionState: CameraPositionState by viewModel.cps.observeAsState(initial = CameraPositionState())
+    val context = LocalContext.current
 
     GoogleMap(cameraPositionState = cameraPositionState) {
         if (filteredPois.isNotEmpty()) {
@@ -264,7 +284,8 @@ fun ItineraryMap(
                             p.location.lonPoint
                         )
                     ),
-                    title = p.name
+                    title = p.name,
+                    onInfoWindowClick = { viewModel.searchPoi(context, p.name) }
                 )
             }
         }

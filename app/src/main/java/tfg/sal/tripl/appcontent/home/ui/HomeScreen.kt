@@ -1,10 +1,8 @@
 package tfg.sal.tripl.appcontent.home.ui
 
 import android.app.Activity
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -21,12 +19,9 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
@@ -36,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.data.countries.Countries
 import tfg.sal.tripl.appcontent.home.itinerary.ui.ItineraryViewModel
@@ -52,11 +46,25 @@ fun HomeScreen(
     navigationController: NavHostController
 ) {
 
-    val countryNames: List<String> by viewModel.countryNames.observeAsState(initial = listOf())
-    val countries: Countries by viewModel.countries.observeAsState(initial = Countries(null))
-    val destination: String by viewModel.destination.observeAsState(initial = "")
+    val countriesObject: Countries by viewModel.countries.observeAsState(initial = Countries(null))
+    val destinationCountry: String by viewModel.destinationCountry.observeAsState(initial = "")
+    val destinationCity: String by viewModel.destinationCity.observeAsState(initial = "")
 
-    itineraryViewModel.getPOI(countries, destination)
+    val countries = mutableListOf<String>()
+    countriesObject.countries?.countriesData?.forEach {
+        countries.add(it.countryName)
+    }
+
+    val cities = mutableListOf<String>()
+    countriesObject.countries?.countriesData?.forEach {
+        if (it.countryName == destinationCountry) {
+            it.countryCities.forEach { city ->
+                cities.add(city)
+            }
+        }
+    }
+
+    itineraryViewModel.setFilters()
     val activity = LocalContext.current as Activity
 
     BackHandler {
@@ -79,16 +87,19 @@ fun HomeScreen(
             Column {
                 HomeContentSearch(
                     modifier = Modifier.padding(16.dp),
-                    countryNames = countryNames,
-                    destination = destination,
+                    countries = countries,
+                    cities = cities,
+                    destinationCountry = destinationCountry,
+                    destinationCity = destinationCity,
                     viewModel = viewModel,
+                    itineraryViewModel = itineraryViewModel,
                     navigationController = navigationController
                 )
-                HomeContentRecommendedDestinations(
+                /*HomeContentRecommendedDestinations(
                     modifier = Modifier.padding(16.dp),
                     viewModel = viewModel,
                     navigationController = navigationController
-                )
+                )*/
             }
         },
         bottomBar = {
@@ -107,18 +118,23 @@ fun HomeScreen(
 @Composable
 fun HomeContentSearch(
     modifier: Modifier,
-    countryNames: List<String>,
-    destination: String,
+    countries: List<String>,
+    cities: List<String>,
+    destinationCountry: String,
+    destinationCity: String,
     viewModel: HomeViewModel,
+    itineraryViewModel: ItineraryViewModel,
     navigationController: NavHostController
 ) {
     Column(modifier = modifier) {
-        TriplDropDownMenu(destination, viewModel, countryNames)
+        TriplDropDownCountriesMenu(destinationCountry, viewModel, countries)
+        Spacer(modifier = modifier)
+        TriplDropDownCitiesMenu(destinationCity, viewModel, cities)
         Spacer(modifier = modifier)
         TriplButton(
             text = stringResource(id = R.string.search),
             buttonEnable = true
-        ) { viewModel.onSearchTrip(navigationController) }
+        ) { viewModel.onSearchTrip(navigationController, itineraryViewModel) }
 
     }
 }
@@ -136,9 +152,13 @@ fun HomeContentRecommendedDestinations(
 }
 
 @Composable
-fun TriplDropDownMenu(destination: String, viewModel: HomeViewModel, countryNames: List<String>) {
+fun TriplDropDownCountriesMenu(
+    destination: String,
+    viewModel: HomeViewModel,
+    countries: List<String>
+) {
 
-    val expanded: Boolean by viewModel.expanded.observeAsState(initial = false)
+    val expanded: Boolean by viewModel.expandedCountries.observeAsState(initial = false)
     val interactionSource: MutableInteractionSource by viewModel.interactionSource.observeAsState(
         initial = MutableInteractionSource()
     )
@@ -149,7 +169,7 @@ fun TriplDropDownMenu(destination: String, viewModel: HomeViewModel, countryName
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = { viewModel.onExpandedChange(false) }
+                onClick = { viewModel.onExpandedCountriesChange(false) }
             )
     ) {
         Row(Modifier.fillMaxWidth()) {
@@ -159,16 +179,16 @@ fun TriplDropDownMenu(destination: String, viewModel: HomeViewModel, countryName
                 Icons.Default.KeyboardArrowDown
             }
             TriplTextField(
-                label = stringResource(id = R.string.destination),
-                type = KeyboardType.Text,
                 value = destination,
+                label = stringResource(id = R.string.destination_country),
+                type = KeyboardType.Text,
                 modifier = Modifier.fillMaxWidth(),
                 imeAction = ImeAction.Done,
                 icon = icon,
-                onClick = { viewModel.onExpandedChange(!expanded) }
+                onClick = { viewModel.onExpandedCountriesChange(!expanded) }
             ) {
-                viewModel.onSelectedTextChange(it)
-                viewModel.onExpandedChange(true)
+                viewModel.onSelectedCountryTextChange(it)
+                viewModel.onExpandedCountriesChange(true)
             }
         }
 
@@ -182,23 +202,96 @@ fun TriplDropDownMenu(destination: String, viewModel: HomeViewModel, countryName
                 LazyColumn(Modifier.heightIn(max = TextFieldDefaults.MinHeight * 4)) {
                     if (destination.isNotEmpty()) {
                         items(
-                            countryNames.filter {
+                            countries.filter {
                                 it.contains(destination, ignoreCase = true)
                             }
                                 .sorted()
                         ) {
                             DestinationItems(text = it) { text ->
-                                viewModel.onSelectedTextChange(text)
-                                viewModel.onExpandedChange(false)
+                                viewModel.onSelectedCountryTextChange(text)
+                                viewModel.onExpandedCountriesChange(false)
                             }
                         }
                     } else {
                         items(
-                            countryNames.sorted()
+                            countries.sorted()
                         ) {
                             DestinationItems(text = it) { text ->
-                                viewModel.onSelectedTextChange(text)
-                                viewModel.onExpandedChange(false)
+                                viewModel.onSelectedCountryTextChange(text)
+                                viewModel.onExpandedCountriesChange(false)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TriplDropDownCitiesMenu(destination: String, viewModel: HomeViewModel, cities: List<String>) {
+
+    val expanded: Boolean by viewModel.expandedCities.observeAsState(initial = false)
+    val interactionSource: MutableInteractionSource by viewModel.interactionSource.observeAsState(
+        initial = MutableInteractionSource()
+    )
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = { viewModel.onExpandedCountriesChange(false) }
+            )
+    ) {
+        Row(Modifier.fillMaxWidth()) {
+            val icon: ImageVector = if (expanded) {
+                Icons.Default.KeyboardArrowUp
+            } else {
+                Icons.Default.KeyboardArrowDown
+            }
+            TriplTextField(
+                label = stringResource(id = R.string.destination_city),
+                type = KeyboardType.Text,
+                value = destination,
+                modifier = Modifier.fillMaxWidth(),
+                imeAction = ImeAction.Done,
+                icon = icon,
+                onClick = { viewModel.onExpandedCitiesChange(!expanded) }
+            ) {
+                viewModel.onSelectedCityTextChange(it)
+                viewModel.onExpandedCitiesChange(true)
+            }
+        }
+
+        AnimatedVisibility(visible = expanded) {
+            Card(
+                modifier = Modifier
+                    .padding(horizontal = 6.dp)
+                    .fillMaxWidth(),
+                elevation = 8.dp
+            ) {
+                LazyColumn(Modifier.heightIn(max = TextFieldDefaults.MinHeight * 4)) {
+                    if (destination.isNotEmpty()) {
+                        items(
+                            cities.filter {
+                                it.contains(destination, ignoreCase = true)
+                            }
+                                .sorted()
+                        ) {
+                            DestinationItems(text = it) { text ->
+                                viewModel.onSelectedCityTextChange(text)
+                                viewModel.onExpandedCitiesChange(false)
+                            }
+                        }
+                    } else {
+                        items(
+                            cities.sorted()
+                        ) {
+                            DestinationItems(text = it) { text ->
+                                viewModel.onSelectedCityTextChange(text)
+                                viewModel.onExpandedCitiesChange(false)
                             }
                         }
                     }
@@ -229,6 +322,7 @@ fun TriplRecommendedDestinations(
     viewModel: HomeViewModel,
     navigationController: NavHostController
 ) {
+}/*{
     val countryFlags = viewModel.suggestedFlags.value
     Column {
         if (countryFlags?.isNotEmpty() == true) {
@@ -253,7 +347,7 @@ fun TriplRecommendedDestinations(
             }
         }
     }
-}
+}*/
 
 @Composable
 fun BottomNav(
