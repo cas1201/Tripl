@@ -31,6 +31,12 @@ import kotlin.math.sqrt
 class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase) : ViewModel() {
     private val types = mutableMapOf<String, Boolean>()
 
+    private val _destinationCountry = MutableLiveData<String>()
+    val destinationCountry: LiveData<String> = _destinationCountry
+
+    private val _destinationCity = MutableLiveData<String>()
+    val destinationCity: LiveData<String> = _destinationCity
+
     private val _dropDownMenuExpanded = MutableLiveData<Boolean>()
     val dropDownMenuExpanded: LiveData<Boolean> = _dropDownMenuExpanded
 
@@ -82,11 +88,15 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     private val _cps = MutableLiveData<CameraPositionState>()
     val cps: LiveData<CameraPositionState> = _cps
 
-    fun onBackPressed(homeViewModel: HomeViewModel, navigationController: NavHostController) {
-        homeViewModel.clearTextField()
+    fun onBackPressed(navigationController: NavHostController) {
         navigationController.navigate(Routes.HomeScreen.route) {
             popUpTo(Routes.HomeScreen.route) { inclusive = true }
         }
+    }
+
+    fun saveDestination(country: String?, city: String?) {
+        _destinationCountry.value = country
+        _destinationCity.value = city
     }
 
     fun onMenuPressed(expanded: Boolean) {
@@ -166,7 +176,12 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         Log.i("distancealert", "${poisDistance.value}")
     }
 
-    fun getPOI(coordinates: Coordinates) {
+    fun getPOI(
+        coordinates: Coordinates,
+        siPois: List<POIResponse>? = null,
+        siPoisMarker: List<LatLng>? = null,
+        siCameraPosition: CameraPositionState? = null
+    ) {
         val coord = coordinates.coordinates
         viewModelScope.launch {
             if (coord != null && coord.isNotEmpty()) {
@@ -180,14 +195,21 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
                 Log.i("error", "Coordenadas (itineraryvm linea 177)")
                 //error por coordenadas
             }
-            if (pois.value != null) {
-                filterPOI()
-                _poiMarkerCoordinates.value = getPoisMarkerCoordinates(filteredPois.value)
-                _filteredPoisCameraPosition.value = calculateMidPoint(filteredPois.value)
-                setCameraPosition()
+            if (siPois != null) {
+                _filteredPois.value = siPois
+                _poiMarkerCoordinates.value = siPoisMarker
+                setCameraPosition(siCameraPosition)
                 _showMap.value = true
             } else {
-                //error consultando pois
+                if (pois.value != null) {
+                    filterPOI()
+                    _poiMarkerCoordinates.value = getPoisMarkerCoordinates(filteredPois.value)
+                    _filteredPoisCameraPosition.value = calculateMidPoint(filteredPois.value)
+                    setCameraPosition()
+                    _showMap.value = true
+                } else {
+                    //error consultando pois
+                }
             }
         }
     }
@@ -266,18 +288,21 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         }
     }
 
-    private fun setCameraPosition() {
+    private fun setCameraPosition(cameraPosition: CameraPositionState? = null) {
         val fPC = filteredPoisCameraPosition.value
 
-        if (fPC?.isNotEmpty() == true) {
-            val filteredPoisCoords = LatLng(fPC[0], fPC[1])
-            val position = CameraPosition.fromLatLngZoom(filteredPoisCoords, 9f)
-            _cps.value = CameraPositionState(position)
+        if (cameraPosition != null) {
+            _cps.value = cameraPosition
+        } else {
+            if (fPC?.isNotEmpty() == true) {
+                val filteredPoisCoords = LatLng(fPC[0], fPC[1])
+                val position = CameraPosition.fromLatLngZoom(filteredPoisCoords, 9f)
+                _cps.value = CameraPositionState(position)
+            }
         }
     }
 
     fun onItinerarySave(
-        homeViewModel: HomeViewModel,
         tripViewModel: TripViewModel,
         navigationController: NavHostController
     ) {
@@ -285,10 +310,9 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
             filteredPois.value,
             poiMarkerCoordinates.value,
             cps.value,
-            homeViewModel.destinationCountry.value,
-            homeViewModel.destinationCity.value
+            destinationCountry.value,
+            destinationCity.value
         )
-        homeViewModel.clearTextField()
         navigationController.navigate(Routes.TripScreen.route) {
             popUpTo(Routes.TripScreen.route) { inclusive = true }
         }

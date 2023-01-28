@@ -65,12 +65,6 @@ fun ProfileDetailsBody(
         DetailsRow(
             stringResource(id = R.string.login_info),
             clickAction = { viewModel.navigate(R.string.login_info, navigationController) })
-        DetailsRow(
-            stringResource(id = R.string.traveler_info),
-            clickAction = { viewModel.navigate(R.string.traveler_info, navigationController) })
-        DetailsRow(
-            stringResource(id = R.string.payments),
-            clickAction = { viewModel.navigate(R.string.payments, navigationController) })
         DetailsRow(stringResource(id = R.string.log_out), false) {
             viewModel.logout(
                 fireBaseViewModel,

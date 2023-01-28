@@ -103,7 +103,7 @@ class HomeViewModel @Inject constructor(
         _expandedCities.value = expanded
     }
 
-    fun clearTextField() {
+    private fun clearTextField() {
         _destinationCountry.value = ""
         _destinationCity.value = ""
     }
@@ -123,6 +123,8 @@ class HomeViewModel @Inject constructor(
                     )
                     itineraryViewModel.getPOI(coordinates)
                     navigationController.navigate(Routes.ItineraryScreen.route) {
+                        itineraryViewModel.saveDestination(destinationCountry.value, destinationCity.value)
+                        clearTextField()
                         popUpTo(Routes.HomeScreen.route) { inclusive = true }
                     }
                 } else {
@@ -142,6 +144,8 @@ class HomeViewModel @Inject constructor(
                 )
                 itineraryViewModel.getPOI(coordinates)
                 navigationController.navigate(Routes.ItineraryScreen.route) {
+                    itineraryViewModel.saveDestination(destinationCountry.value, destinationCity.value)
+                    clearTextField()
                     popUpTo(Routes.HomeScreen.route) { inclusive = true }
                 }
             }
@@ -193,12 +197,12 @@ class HomeViewModel @Inject constructor(
         when (selectedIndex) {
             1 -> navigationController.navigate(Routes.HomeScreen.route)
             2 -> {
-                navigationController.navigate(Routes.TripScreen.route)
                 clearTextField()
+                navigationController.navigate(Routes.TripScreen.route)
             }
             3 -> {
-                navigationController.navigate(Routes.ProfileScreen.route)
                 clearTextField()
+                navigationController.navigate(Routes.ProfileScreen.route)
             }
         }
     }

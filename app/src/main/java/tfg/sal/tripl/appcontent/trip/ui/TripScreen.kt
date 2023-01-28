@@ -13,7 +13,10 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.itinerary.ui.ItineraryViewModel
@@ -42,7 +45,12 @@ fun TripScreen(
             )
         },
         content = {
-            tripBody(viewModel = viewModel, itineraryViewModel = itineraryViewModel)
+            tripBody(
+                modifier = Modifier.padding(16.dp),
+                viewModel = viewModel,
+                itineraryViewModel = itineraryViewModel,
+                navigationController = navigationController
+            )
         },
         bottomBar = {
             BottomNav(
@@ -58,25 +66,41 @@ fun TripScreen(
 }
 
 @Composable
-fun tripBody(viewModel: TripViewModel, itineraryViewModel: ItineraryViewModel) {
+fun tripBody(
+    modifier: Modifier,
+    viewModel: TripViewModel,
+    itineraryViewModel: ItineraryViewModel,
+    navigationController: NavHostController
+) {
     val savedItineraries: List<SavedItinerary> by viewModel.savedItineraries.observeAsState(initial = listOf())
 
-    Column(
-        Modifier
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
-        for (si in savedItineraries) {
-            Card(
-                elevation = 10.dp,
-                content = { savedItineraryCard(si) },
-                modifier = Modifier.clickable {
-                    viewModel.onSavedItineraryCardClick(itineraryViewModel)
-                }
+    if (savedItineraries.isEmpty()) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = stringResource(id = R.string.no_saved_itineraries),
+                textAlign = TextAlign.Center,
+                fontSize = 23.sp,
+                fontWeight = FontWeight.ExtraBold
             )
-            Spacer(modifier = Modifier.padding(8.dp))
         }
-        Spacer(modifier = Modifier.padding(16.dp))
+    } else {
+        Column(modifier.verticalScroll(rememberScrollState())) {
+            for (si in savedItineraries) {
+                Card(
+                    elevation = 10.dp,
+                    content = { savedItineraryCard(si) },
+                    modifier = Modifier.clickable {
+                        viewModel.onSavedItineraryCardClick(
+                            si,
+                            itineraryViewModel,
+                            navigationController
+                        )
+                    }
+                )
+                Spacer(modifier = Modifier.padding(8.dp))
+            }
+            Spacer(modifier = Modifier.padding(16.dp))
+        }
     }
 }
 

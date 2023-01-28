@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
@@ -53,7 +54,6 @@ fun HomeScreen(
     itineraryViewModel: ItineraryViewModel,
     navigationController: NavHostController
 ) {
-
     val countriesObject: List<CountriesData> by viewModel.countries.observeAsState(initial = listOf())
     val destinationCountry: String by viewModel.destinationCountry.observeAsState(initial = "")
     val destinationCity: String by viewModel.destinationCity.observeAsState(initial = "")
@@ -359,7 +359,8 @@ fun TriplRecommendedDestinations(
                     Spacer(modifier = Modifier.padding(1.dp))
                     Text(
                         text = viewModel.sanitizeFlagMap(rf.keys).uppercase(),
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        textAlign = TextAlign.Center
                     )
                 }
                 Spacer(modifier = Modifier.padding(8.dp))

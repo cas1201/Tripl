@@ -23,10 +23,6 @@ import tfg.sal.tripl.appcontent.profile.profileoptions.preferences.ui.Preference
 import tfg.sal.tripl.appcontent.profile.profileoptions.preferences.ui.PreferencesViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.logininfo.ui.LoginInfoScreen
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.logininfo.ui.LoginInfoViewModel
-import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.payments.ui.PaymentsScreen
-import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.payments.ui.PaymentsViewModel
-import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.travelerinfo.ui.TravelerInfoScreen
-import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.travelerinfo.ui.TravelerInfoViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.ProfileDetailsScreen
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.ProfileDetailsViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.settings.ui.SettingsScreen
@@ -60,8 +56,6 @@ class MainActivity : ComponentActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private val profileDetailsViewModel: ProfileDetailsViewModel by viewModels()
     private val loginInfoViewModel: LoginInfoViewModel by viewModels()
-    private val travelerInfoViewModel: TravelerInfoViewModel by viewModels()
-    private val paymentsViewModel: PaymentsViewModel by viewModels()
     private val preferencesViewModel: PreferencesViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val supportViewModel: SupportViewModel by viewModels()
@@ -119,7 +113,6 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.ItineraryScreen.route) {
                             ItineraryScreen(
                                 itineraryViewModel,
-                                homeViewModel,
                                 tripViewModel,
                                 navigationController
                             )
@@ -149,20 +142,6 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.LoginInfoScreen.route) {
                             LoginInfoScreen(
                                 loginInfoViewModel,
-                                fireBaseViewModel,
-                                navigationController
-                            )
-                        }
-                        composable(Routes.TravelerInfoScreen.route) {
-                            TravelerInfoScreen(
-                                travelerInfoViewModel,
-                                fireBaseViewModel,
-                                navigationController
-                            )
-                        }
-                        composable(Routes.PaymentsScreen.route) {
-                            PaymentsScreen(
-                                paymentsViewModel,
                                 fireBaseViewModel,
                                 navigationController
                             )

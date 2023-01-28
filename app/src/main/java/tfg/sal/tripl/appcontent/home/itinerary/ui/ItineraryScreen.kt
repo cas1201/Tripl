@@ -38,7 +38,6 @@ import tfg.sal.tripl.theme.SecondaryColor
 @Composable
 fun ItineraryScreen(
     viewModel: ItineraryViewModel,
-    homeViewModel: HomeViewModel,
     tripViewModel: TripViewModel,
     navigationController: NavHostController
 ) {
@@ -48,7 +47,7 @@ fun ItineraryScreen(
     val showMap: Boolean by viewModel.showMap.observeAsState(initial = false)
 
     BackHandler {
-        viewModel.onBackPressed(homeViewModel, navigationController)
+        viewModel.onBackPressed(navigationController)
     }
 
     val scaffoldState = rememberScaffoldState()
@@ -58,7 +57,6 @@ fun ItineraryScreen(
             topBar = {
                 ItineraryHeader(
                     viewModel = viewModel,
-                    homeViewModel = homeViewModel,
                     poisAmount = poisAmount,
                     poisRating = poisRating,
                     poisDistance = poisDistance,
@@ -71,7 +69,6 @@ fun ItineraryScreen(
             bottomBar = {
                 ItinerarySave {
                     viewModel.onItinerarySave(
-                        homeViewModel,
                         tripViewModel,
                         navigationController
                     )
@@ -88,7 +85,6 @@ fun ItineraryScreen(
 @Composable
 fun ItineraryHeader(
     viewModel: ItineraryViewModel,
-    homeViewModel: HomeViewModel,
     poisAmount: String,
     poisRating: Int,
     poisDistance: Float,
@@ -111,7 +107,7 @@ fun ItineraryHeader(
                 contentDescription = stringResource(id = R.string.back),
                 modifier = Modifier
                     .padding(16.dp)
-                    .clickable { viewModel.onBackPressed(homeViewModel, navigationController) }
+                    .clickable { viewModel.onBackPressed(navigationController) }
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(

@@ -69,4 +69,5 @@
     <string name="religion">Religion</string>
     <string name="other">Otro</string>
     <string name="hide_menu">Cerrar</string>
+    <string name="no_saved_itineraries">Vaya, no se han encontrado itinerarios guardados…</string>
 </resources>
