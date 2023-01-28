@@ -11,8 +11,7 @@ import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.Translator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import tfg.sal.tripl.appcontent.home.data.countries.Countries
-import tfg.sal.tripl.appcontent.home.domain.CapitalCityUseCase
+import tfg.sal.tripl.appcontent.home.data.countries.CountriesData
 import tfg.sal.tripl.appcontent.home.domain.CoordinatesUseCase
 import tfg.sal.tripl.appcontent.home.itinerary.ui.ItineraryViewModel
 import tfg.sal.tripl.core.Routes
@@ -22,7 +21,6 @@ import javax.inject.Named
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val coordinatesUseCase: CoordinatesUseCase,
-    private val capitalCityUseCase: CapitalCityUseCase,
     @Named("EnEsTranslator") private val enesTranslator: Translator,
     @Named("EsEnTranslator") private val esenTranslator: Translator,
     private val downloadConditions: DownloadConditions
@@ -37,8 +35,8 @@ class HomeViewModel @Inject constructor(
     private val _destinationCity = MutableLiveData<String>()
     val destinationCity: LiveData<String> = _destinationCity
 
-    private val _countries = MutableLiveData<Countries>()
-    val countries: LiveData<Countries> = _countries
+    private val _countries = MutableLiveData<List<CountriesData>>()
+    val countries: LiveData<List<CountriesData>> = _countries
 
     private val _expandedCountries = MutableLiveData<Boolean>()
     val expandedCountries: LiveData<Boolean> = _expandedCountries
@@ -61,7 +59,16 @@ class HomeViewModel @Inject constructor(
     private val _endDate = MutableLiveData<String>()
     val endDate: LiveData<String> = _endDate*/
 
-    suspend fun setCountriesValue(countries: Countries) {
+    suspend fun setCountriesValue(countries: MutableList<CountriesData>?, flagsAndCities: List<CountriesData>?) {
+        countries?.forEach { country ->
+            flagsAndCities?.forEach { flAndCi ->
+                if (country.countryName == flAndCi.countryName) {
+                    country.countryFlag = flAndCi.countryFlag
+                    country.countryCities = flAndCi.countryCities
+                }
+            }
+        }
+        countries?.removeAll { it.countryCities == null }
         _countries.value = countries
     }
 
@@ -101,8 +108,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             if (cardDestination == null) {
                 if (validateDestination) {
-
-                    val capitalCity = capitalCityUseCase("ES")
                     val coordinates = coordinatesUseCase(
                         destinationCity.value!!,
                         destinationCountryIso.value!!
@@ -129,17 +134,13 @@ class HomeViewModel @Inject constructor(
         var city = false
         var valid = false
 
-        if (destinationCountry.value != null && destinationCountry.value != "") {
-            countries.value?.countries?.countriesData?.forEach {
+        if (destinationCountry.value?.isBlank() == false && destinationCity.value?.isBlank() == false) {
+            countries.value?.forEach {
                 if (it.countryName == destinationCountry.value) {
                     _destinationCountryIso.value = it.countryIso
                     country = true
                 }
-            }
-        }
-        if (destinationCity.value != null && destinationCity.value != "") {
-            countries.value?.countries?.countriesData?.forEach {
-                if (it.countryCities.contains(destinationCity.value)) {
+                if (it.countryCities!!.contains(destinationCity.value)) {
                     city = true
                 }
             }
@@ -172,8 +173,14 @@ class HomeViewModel @Inject constructor(
     fun onIndexChange(selectedIndex: Int, navigationController: NavHostController) {
         when (selectedIndex) {
             1 -> navigationController.navigate(Routes.HomeScreen.route)
-            2 -> navigationController.navigate(Routes.TripScreen.route)
-            3 -> navigationController.navigate(Routes.ProfileScreen.route)
+            2 -> {
+                navigationController.navigate(Routes.TripScreen.route)
+                clearTextField()
+            }
+            3 -> {
+                navigationController.navigate(Routes.ProfileScreen.route)
+                clearTextField()
+            }
         }
     }
     /*

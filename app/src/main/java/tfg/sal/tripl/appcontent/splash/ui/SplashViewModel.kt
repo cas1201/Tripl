@@ -40,15 +40,16 @@ class SplashViewModel @Inject constructor(private val countriesUseCase: Countrie
     }
 
     fun getCountries(homeViewModel: HomeViewModel) {
-        val countries = homeViewModel.countries.value?.countries
-        if (countries?.countriesData?.isEmpty() == true || countries?.countriesData == null) {
+        val countries = homeViewModel.countries.value
+        if (countries?.isEmpty() == true || countries == null) {
             //val names = mutableListOf<String>()
             //val flags = mutableListOf<Map<String, String>>()
             viewModelScope.launch {
-                val countriesObject = countriesUseCase()
+                val countriesObject = countriesUseCase().countries?.countriesData
+                val flagsAndCitiesObject = countriesUseCase(true).countries?.countriesData
                 //countriesObject.countries?.countriesData?.forEach { names.add(it.countryName) }
                 //countriesObject.countries?.countriesData?.forEach { flags.add(mapOf(it.countryName to it.flags.png)) }
-                homeViewModel.setCountriesValue(countriesObject)
+                homeViewModel.setCountriesValue(countriesObject, flagsAndCitiesObject)
                 _continueToHome.value = true
             }
         }

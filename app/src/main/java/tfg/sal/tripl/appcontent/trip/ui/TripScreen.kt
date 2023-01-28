@@ -42,7 +42,7 @@ fun TripScreen(
             )
         },
         content = {
-            tripBody(viewModel = viewModel)
+            tripBody(viewModel = viewModel, itineraryViewModel = itineraryViewModel)
         },
         bottomBar = {
             BottomNav(
@@ -58,7 +58,7 @@ fun TripScreen(
 }
 
 @Composable
-fun tripBody(viewModel: TripViewModel) {
+fun tripBody(viewModel: TripViewModel, itineraryViewModel: ItineraryViewModel) {
     val savedItineraries: List<SavedItinerary> by viewModel.savedItineraries.observeAsState(initial = listOf())
 
     Column(
@@ -70,7 +70,9 @@ fun tripBody(viewModel: TripViewModel) {
             Card(
                 elevation = 10.dp,
                 content = { savedItineraryCard(si) },
-                modifier = Modifier.clickable { viewModel.onSavedItineraryCardClick() }
+                modifier = Modifier.clickable {
+                    viewModel.onSavedItineraryCardClick(itineraryViewModel)
+                }
             )
             Spacer(modifier = Modifier.padding(8.dp))
         }
@@ -80,7 +82,11 @@ fun tripBody(viewModel: TripViewModel) {
 
 @Composable
 fun savedItineraryCard(si: SavedItinerary) {
-    Row(modifier = Modifier.height(150.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = Modifier.height(150.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Icon(
             imageVector = Icons.Default.Search,
             contentDescription = "",

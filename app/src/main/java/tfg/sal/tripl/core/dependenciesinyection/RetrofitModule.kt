@@ -6,8 +6,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import tfg.sal.tripl.appcontent.home.data.countries.CapitalCity
-import tfg.sal.tripl.appcontent.home.data.network.countries.CapitalCityClient
 import tfg.sal.tripl.appcontent.home.data.network.countries.CoordinatesClient
 import tfg.sal.tripl.appcontent.home.data.network.countries.CountriesClient
 import tfg.sal.tripl.appcontent.home.data.network.poi.OpenTripMapClient
@@ -42,11 +40,5 @@ class RetrofitModule {
     @Provides
     fun provideCoordinatesClient(retrofit: Retrofit): CoordinatesClient {
         return retrofit.create(CoordinatesClient::class.java)
-    }
-
-    @Singleton
-    @Provides
-    fun provideCapitalCityClient(retrofit: Retrofit): CapitalCityClient {
-        return retrofit.create(CapitalCityClient::class.java)
     }
 }

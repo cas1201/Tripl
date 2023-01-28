@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
 import tfg.sal.tripl.appcontent.home.data.network.response.POIResponse
+import tfg.sal.tripl.appcontent.home.itinerary.ui.ItineraryViewModel
 import tfg.sal.tripl.appcontent.trip.data.SavedItinerary
 import tfg.sal.tripl.core.Routes
 
@@ -44,7 +45,7 @@ class TripViewModel : ViewModel() {
 
     }
 
-    fun onSavedItineraryCardClick() {
+    fun onSavedItineraryCardClick(itineraryViewModel: ItineraryViewModel) {
         Log.i("itinerarysave", "itinerary card clicked")
     }
 

@@ -1,6 +1,7 @@
 package tfg.sal.tripl.appcontent.home.ui
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -33,6 +34,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.data.countries.Countries
+import tfg.sal.tripl.appcontent.home.data.countries.CountriesData
+import tfg.sal.tripl.appcontent.home.data.network.response.CountriesResponse
 import tfg.sal.tripl.appcontent.home.itinerary.ui.ItineraryViewModel
 import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.TriplTextField
@@ -46,19 +49,19 @@ fun HomeScreen(
     navigationController: NavHostController
 ) {
 
-    val countriesObject: Countries by viewModel.countries.observeAsState(initial = Countries(null))
+    val countriesObject: List<CountriesData> by viewModel.countries.observeAsState(initial = listOf())
     val destinationCountry: String by viewModel.destinationCountry.observeAsState(initial = "")
     val destinationCity: String by viewModel.destinationCity.observeAsState(initial = "")
 
     val countries = mutableListOf<String>()
-    countriesObject.countries?.countriesData?.forEach {
+    countriesObject.forEach {
         countries.add(it.countryName)
     }
 
     val cities = mutableListOf<String>()
-    countriesObject.countries?.countriesData?.forEach {
+    countriesObject.forEach {
         if (it.countryName == destinationCountry) {
-            it.countryCities.forEach { city ->
+            it.countryCities?.forEach { city ->
                 cities.add(city)
             }
         }

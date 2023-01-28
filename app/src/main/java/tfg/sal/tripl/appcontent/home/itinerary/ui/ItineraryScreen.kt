@@ -285,7 +285,7 @@ fun ItineraryMap(
                         )
                     ),
                     title = p.name,
-                    onInfoWindowClick = { viewModel.searchPoi(context, p.name) }
+                    onInfoWindowClick = { viewModel.searchPoiOnGoogle(context, p.name) }
                 )
             }
         }

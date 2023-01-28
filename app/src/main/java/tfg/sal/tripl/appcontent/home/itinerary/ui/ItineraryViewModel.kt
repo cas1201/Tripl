@@ -234,7 +234,7 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         _poiMarkerCoordinates.value = getPoisMarkerCoordinates(filteredPois.value)
     }
 
-    fun searchPoi(context: Context, poiName: String) {
+    fun searchPoiOnGoogle(context: Context, poiName: String) {
         val openURL = Intent(Intent.ACTION_VIEW)
         openURL.data = Uri.parse("https://www.google.com/search?q=$poiName")
         startActivity(context, openURL, null)
