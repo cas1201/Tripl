@@ -47,34 +47,43 @@ class HomeViewModel @Inject constructor(
     private val _interactionSource = MutableLiveData<MutableInteractionSource>()
     val interactionSource: LiveData<MutableInteractionSource> = _interactionSource
 
-    /*private val _countryFlags = MutableLiveData<List<Map<String, String>>>()
+    private val _countryFlags = MutableLiveData<List<Map<String, String>>>()
     val countryFlags: LiveData<List<Map<String, String>>> = _countryFlags
 
     private val _suggestedFlags = MutableLiveData<List<Map<String, String>>>()
-    val suggestedFlags: LiveData<List<Map<String, String>>> = _suggestedFlags*/
+    val suggestedFlags: LiveData<List<Map<String, String>>> = _suggestedFlags
 
-    /*private val _startDate = MutableLiveData<String>()
-    val startDate: LiveData<String> = _startDate
+    fun sanitizeFlagMap(input: Any): String {
+        return input.toString().replace("[", "").replace("]", "")
+    }
 
-    private val _endDate = MutableLiveData<String>()
-    val endDate: LiveData<String> = _endDate*/
-
-    suspend fun setCountriesValue(countries: MutableList<CountriesData>?, flagsAndCities: List<CountriesData>?) {
+    suspend fun setCountriesValue(
+        countries: MutableList<CountriesData>?,
+        flagsAndCities: List<CountriesData>?
+    ) {
         countries?.forEach { country ->
             flagsAndCities?.forEach { flAndCi ->
                 if (country.countryName == flAndCi.countryName) {
-                    country.countryFlag = flAndCi.countryFlag
+                    country.countryFlag =
+                        if (!flAndCi.countryFlag.isNullOrBlank()) flAndCi.countryFlag
+                        else "https://upload.wikimedia.org/wikipedia/commons/2/2f/Flag_of_the_United_Nations.svg"
                     country.countryCities = flAndCi.countryCities
                 }
             }
         }
+        setFlags(countries)
         countries?.removeAll { it.countryCities == null }
         _countries.value = countries
     }
 
-    /*fun setSuggestedFlags() {
+    private fun setFlags(countries: List<CountriesData>?) {
+        val sfl = mutableListOf<Map<String, String>>()
+        countries?.forEach {
+            sfl.add(mapOf(it.countryName to it.countryFlag))
+        }
+        _countryFlags.value = sfl
         _suggestedFlags.value = countryFlags.value?.shuffled()?.take(5)
-    }*/
+    }
 
     fun onSelectedCountryTextChange(selectedText: String) {
         _expandedCountries.value = true
@@ -121,10 +130,20 @@ class HomeViewModel @Inject constructor(
                 }
             } else {
                 _destinationCountry.value = cardDestination
-                Log.i("Validaciones", "Entrada por 'CardDestination'")
-                /*navigationController.navigate(Routes.ItineraryScreen.route) {
+                countries.value?.forEach {
+                    if (it.countryName == destinationCountry.value) {
+                        _destinationCity.value = it.capitalCity
+                        _destinationCountryIso.value = it.countryIso
+                    }
+                }
+                val coordinates = coordinatesUseCase(
+                    destinationCity.value!!,
+                    destinationCountryIso.value!!
+                )
+                itineraryViewModel.getPOI(coordinates)
+                navigationController.navigate(Routes.ItineraryScreen.route) {
                     popUpTo(Routes.HomeScreen.route) { inclusive = true }
-                }*/
+                }
             }
         }
     }
@@ -183,32 +202,32 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    /*
-    fun onStartDateChange(startDate: String) {
-        if (startDate != "") {
-            _startDate.value = startDate
-        }
+/*
+fun onStartDateChange(startDate: String) {
+    if (startDate != "") {
+        _startDate.value = startDate
     }
+}
 
-    fun onEndDateChange(endDate: String) {
-        if (endDate != "") {
-            _endDate.value = endDate
-        }
+fun onEndDateChange(endDate: String) {
+    if (endDate != "") {
+        _endDate.value = endDate
     }
+}
 
-    private fun dateValidation(startDate: String?, endDate: String? = null): Boolean {
-        val dateCompare = endDate?.let { startDate?.compareTo(it) }
-        return if (dateCompare != null) {
-            when {
-                dateCompare <= 0 -> {
-                    true
-                }
-                else -> {
-                    false
-                }
+private fun dateValidation(startDate: String?, endDate: String? = null): Boolean {
+    val dateCompare = endDate?.let { startDate?.compareTo(it) }
+    return if (dateCompare != null) {
+        when {
+            dateCompare <= 0 -> {
+                true
             }
-        } else {
-            false
+            else -> {
+                false
+            }
         }
-    }*/
+    } else {
+        false
+    }
+}*/
 }

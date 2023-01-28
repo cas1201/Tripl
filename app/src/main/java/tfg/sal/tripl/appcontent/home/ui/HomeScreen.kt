@@ -20,8 +20,10 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -32,6 +34,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.data.countries.Countries
 import tfg.sal.tripl.appcontent.home.data.countries.CountriesData
@@ -98,11 +103,12 @@ fun HomeScreen(
                     itineraryViewModel = itineraryViewModel,
                     navigationController = navigationController
                 )
-                /*HomeContentRecommendedDestinations(
+                HomeContentRecommendedDestinations(
                     modifier = Modifier.padding(16.dp),
                     viewModel = viewModel,
+                    itineraryViewModel = itineraryViewModel,
                     navigationController = navigationController
-                )*/
+                )
             }
         },
         bottomBar = {
@@ -146,10 +152,11 @@ fun HomeContentSearch(
 fun HomeContentRecommendedDestinations(
     modifier: Modifier,
     viewModel: HomeViewModel,
+    itineraryViewModel: ItineraryViewModel,
     navigationController: NavHostController
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-        TriplRecommendedDestinations(modifier, viewModel, navigationController)
+        TriplRecommendedDestinations(modifier, viewModel, itineraryViewModel,navigationController)
         Spacer(modifier = Modifier.padding(35.dp))
     }
 }
@@ -323,26 +330,35 @@ fun DestinationItems(
 fun TriplRecommendedDestinations(
     modifier: Modifier,
     viewModel: HomeViewModel,
+    itineraryViewModel: ItineraryViewModel,
     navigationController: NavHostController
 ) {
-}/*{
-    val countryFlags = viewModel.suggestedFlags.value
+    val recommendedFlags: List<Map<String, String>> by viewModel.suggestedFlags.observeAsState(
+        initial = listOf()
+    )
     Column {
-        if (countryFlags?.isNotEmpty() == true) {
-            for (s in countryFlags) {
+        if (recommendedFlags.isNotEmpty()) {
+            for (rf in recommendedFlags) {
                 Column(Modifier.clickable {
-                    viewModel.onSearchTrip(navigationController, s.keys.joinToString())
+                    viewModel.onSearchTrip(
+                        navigationController,
+                        itineraryViewModel,
+                        viewModel.sanitizeFlagMap(rf.keys)
+                    )
                 }
                 ) {
                     AsyncImage(
-                        modifier = modifier.fillMaxWidth(),
-                        model = s.values.joinToString(),
-                        contentDescription = "",
+                        modifier = modifier.fillMaxWidth().height(180.dp),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(viewModel.sanitizeFlagMap(rf.values))
+                            .decoderFactory(SvgDecoder.Factory())
+                            .build(),
+                        contentDescription = viewModel.sanitizeFlagMap(rf.keys),
                         contentScale = ContentScale.FillWidth
                     )
                     Spacer(modifier = Modifier.padding(1.dp))
                     Text(
-                        text = s.keys.joinToString(),
+                        text = viewModel.sanitizeFlagMap(rf.keys).uppercase(),
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
@@ -350,7 +366,7 @@ fun TriplRecommendedDestinations(
             }
         }
     }
-}*/
+}
 
 @Composable
 fun BottomNav(
