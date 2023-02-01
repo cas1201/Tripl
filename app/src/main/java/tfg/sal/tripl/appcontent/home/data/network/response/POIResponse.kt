@@ -9,4 +9,12 @@ data class POIResponse(
     @SerializedName("rate") val rate: Int,
     @SerializedName("kinds") val kinds: String,
     @SerializedName("point") val location: POICoordinates
-)
+) {
+    constructor() : this(
+        name = "",
+        distance = 0.0,
+        rate = 0,
+        kinds = "",
+        location = POICoordinates()
+    )
+}

@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.maps.android.compose.CameraPositionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,7 +21,9 @@ import tfg.sal.tripl.appcontent.home.data.network.response.POIResponse
 import tfg.sal.tripl.appcontent.home.data.poi.PointsOfInterest
 import tfg.sal.tripl.appcontent.home.domain.POIUseCase
 import tfg.sal.tripl.appcontent.home.itinerary.data.POITypes
+import tfg.sal.tripl.appcontent.home.itinerary.data.TriplLatLng
 import tfg.sal.tripl.appcontent.home.ui.HomeViewModel
+import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.trip.ui.TripViewModel
 import tfg.sal.tripl.core.Routes
 import javax.inject.Inject
@@ -36,6 +39,9 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
 
     private val _destinationCity = MutableLiveData<String>()
     private val destinationCity: LiveData<String> = _destinationCity
+
+    private val _countryFlags = MutableLiveData<List<Map<String, String>>>()
+    private val countryFlags: LiveData<List<Map<String, String>>> = _countryFlags
 
     private val _dropDownMenuExpanded = MutableLiveData<Boolean>()
     val dropDownMenuExpanded: LiveData<Boolean> = _dropDownMenuExpanded
@@ -79,8 +85,8 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     private val _filteredPois = MutableLiveData<List<POIResponse>>()
     val filteredPois: LiveData<List<POIResponse>> = _filteredPois
 
-    private val _poiMarkerCoordinates = MutableLiveData<List<LatLng>>()
-    val poiMarkerCoordinates: LiveData<List<LatLng>> = _poiMarkerCoordinates
+    private val _poiMarkerCoordinates = MutableLiveData<List<TriplLatLng>>()
+    val poiMarkerCoordinates: LiveData<List<TriplLatLng>> = _poiMarkerCoordinates
 
     private val _filteredPoisCameraPosition = MutableLiveData<List<Double>>()
     private val filteredPoisCameraPosition: LiveData<List<Double>> = _filteredPoisCameraPosition
@@ -97,6 +103,10 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     fun saveDestination(country: String?, city: String?) {
         _destinationCountry.value = country
         _destinationCity.value = city
+    }
+
+    fun saveFlags(flags: List<Map<String, String>>?) {
+        _countryFlags.value = flags
     }
 
     fun onMenuPressed(expanded: Boolean) {
@@ -179,8 +189,8 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     fun getPOI(
         coordinates: Coordinates,
         siPois: List<POIResponse>? = null,
-        siPoisMarker: List<LatLng>? = null,
-        siCameraPosition: CameraPositionState? = null
+        siPoisMarker: List<TriplLatLng>? = null,
+        siCameraPosition: List<Double>? = null
     ) {
         val coord = coordinates.coordinates
         viewModelScope.launch {
@@ -198,7 +208,8 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
             if (siPois != null) {
                 _filteredPois.value = siPois
                 _poiMarkerCoordinates.value = siPoisMarker
-                setCameraPosition(siCameraPosition)
+                _filteredPoisCameraPosition.value = siCameraPosition
+                setCameraPosition()
                 _showMap.value = true
             } else {
                 if (pois.value != null) {
@@ -252,9 +263,100 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
                         + (it.location.lonPoint - initialPoi.location.lonPoint).pow(2)
             )
         }
-        _filteredPois.value = fPoisOrdered
+        Log.i("orderedpois", "${fPoisOrdered}")
+        Log.i("orderedpois", "${orderPois(fPoisOrdered)}")
+        _filteredPois.value = orderPois(fPoisOrdered)
         _poiMarkerCoordinates.value = getPoisMarkerCoordinates(filteredPois.value)
     }
+
+    fun orderPois(pois: List<POIResponse>): List<POIResponse> {
+        var path = nearestNeighbor(pois)
+        var bestPath = path
+        var improvement = true
+        while (improvement) {
+            improvement = false
+            for (i in 0 until path.size - 1) {
+                for (k in i + 1 until path.size) {
+                    if (k - i == 1) continue
+                    val newPath = swap(path, i, k)
+                    if (totalDistance(newPath) < totalDistance(bestPath)) {
+                        bestPath = newPath
+                        improvement = true
+                    }
+                }
+            }
+            path = bestPath
+        }
+        return bestPath
+    }
+
+    fun nearestNeighbor(pois: List<POIResponse>): List<POIResponse> {
+        val n = pois.size
+        val visited = BooleanArray(n) { false }
+        val path = mutableListOf<POIResponse>()
+        var minDist = Double.MAX_VALUE
+        var start = 0
+        for (i in 0 until n) {
+            if (pois[i].location.latPoint + pois[i].location.lonPoint < minDist) {
+                minDist = pois[i].location.latPoint + pois[i].location.lonPoint
+                start = i
+            }
+        }
+        var current = start
+        for (i in 0 until n) {
+            visited[current] = true
+            path.add(pois[current])
+            var min = Double.MAX_VALUE
+            var next = -1
+            for (j in 0 until n) {
+                if (!visited[j] && euclideanDistance(
+                        pois[current].location.latPoint,
+                        pois[current].location.lonPoint,
+                        pois[j].location.latPoint,
+                        pois[j].location.lonPoint
+                    ) < min
+                ) {
+                    min = euclideanDistance(
+                        pois[current].location.latPoint,
+                        pois[current].location.lonPoint,
+                        pois[j].location.latPoint,
+                        pois[j].location.lonPoint
+                    )
+                    next = j
+                }
+            }
+            current = next
+        }
+        return path
+    }
+
+    fun swap(path: List<POIResponse>, i: Int, k: Int): List<POIResponse> {
+        val newPath = mutableListOf<POIResponse>()
+        for (j in 0 until i) {
+            newPath.add(path[j])
+        }
+        for (j in k downTo i) {
+            newPath.add(path[j])
+        }
+        for (j in k + 1 until path.size) {
+            newPath.add(path[j])
+        }
+        return newPath
+    }
+
+    fun totalDistance(path: List<POIResponse>): Double {
+        var total = 0.0
+        for (i in 0 until path.size - 1) {
+            total += euclideanDistance(path[i].location.latPoint, path[i].location.lonPoint,
+                path[i + 1].location.latPoint, path[i + 1].location.lonPoint)
+        }
+        return total
+    }
+
+    fun euclideanDistance(x1: Double, y1: Double, x2: Double, y2: Double): Double {
+        return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
+    }
+
 
     fun searchPoiOnGoogle(context: Context, poiName: String) {
         val openURL = Intent(Intent.ACTION_VIEW)
@@ -262,11 +364,11 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         startActivity(context, openURL, null)
     }
 
-    private fun getPoisMarkerCoordinates(pois: List<POIResponse>?): List<LatLng> {
+    private fun getPoisMarkerCoordinates(pois: List<POIResponse>?): List<TriplLatLng> {
         return if (pois != null) {
-            val coordsList = mutableListOf<LatLng>()
+            val coordsList = mutableListOf<TriplLatLng>()
             pois.forEach {
-                coordsList.add(LatLng(it.location.latPoint, it.location.lonPoint))
+                coordsList.add(TriplLatLng(it.location.latPoint, it.location.lonPoint))
             }
             coordsList
         } else {
@@ -306,15 +408,40 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         tripViewModel: TripViewModel,
         navigationController: NavHostController
     ) {
+        var destinationFlag = ""
+        countryFlags.value?.forEach {
+            if (it[destinationCountry.value] != null) {
+                destinationFlag = it[destinationCountry.value].toString()
+            }
+        }
         tripViewModel.saveItinerary(
             filteredPois.value,
             poiMarkerCoordinates.value,
-            cps.value,
+            filteredPoisCameraPosition.value,
             destinationCountry.value,
-            destinationCity.value
+            destinationCity.value,
+            destinationFlag
         )
         navigationController.navigate(Routes.TripScreen.route) {
             popUpTo(Routes.TripScreen.route) { inclusive = true }
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

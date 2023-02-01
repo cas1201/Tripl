@@ -120,7 +120,6 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.TripScreen.route) {
                             TripScreen(
                                 tripViewModel,
-                                fireBaseViewModel,
                                 itineraryViewModel,
                                 navigationController
                             )

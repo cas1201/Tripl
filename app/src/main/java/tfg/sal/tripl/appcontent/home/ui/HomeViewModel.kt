@@ -48,7 +48,7 @@ class HomeViewModel @Inject constructor(
     val interactionSource: LiveData<MutableInteractionSource> = _interactionSource
 
     private val _countryFlags = MutableLiveData<List<Map<String, String>>>()
-    val countryFlags: LiveData<List<Map<String, String>>> = _countryFlags
+    private val countryFlags: LiveData<List<Map<String, String>>> = _countryFlags
 
     private val _suggestedFlags = MutableLiveData<List<Map<String, String>>>()
     val suggestedFlags: LiveData<List<Map<String, String>>> = _suggestedFlags
@@ -123,6 +123,7 @@ class HomeViewModel @Inject constructor(
                     )
                     itineraryViewModel.getPOI(coordinates)
                     navigationController.navigate(Routes.ItineraryScreen.route) {
+                        itineraryViewModel.saveFlags(countryFlags.value)
                         itineraryViewModel.saveDestination(destinationCountry.value, destinationCity.value)
                         clearTextField()
                         popUpTo(Routes.HomeScreen.route) { inclusive = true }
@@ -144,6 +145,7 @@ class HomeViewModel @Inject constructor(
                 )
                 itineraryViewModel.getPOI(coordinates)
                 navigationController.navigate(Routes.ItineraryScreen.route) {
+                    itineraryViewModel.saveFlags(countryFlags.value)
                     itineraryViewModel.saveDestination(destinationCountry.value, destinationCity.value)
                     clearTextField()
                     popUpTo(Routes.HomeScreen.route) { inclusive = true }

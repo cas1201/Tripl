@@ -1,5 +1,6 @@
 package tfg.sal.tripl.appcontent.home.itinerary.ui
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -27,7 +28,7 @@ import com.google.maps.android.compose.*
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.data.network.response.POIResponse
 import tfg.sal.tripl.appcontent.home.itinerary.data.POITypes
-import tfg.sal.tripl.appcontent.home.ui.HomeViewModel
+import tfg.sal.tripl.appcontent.home.itinerary.data.TriplLatLng
 import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.TriplTextField
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.Divisor
@@ -35,6 +36,7 @@ import tfg.sal.tripl.appcontent.trip.ui.TripViewModel
 import tfg.sal.tripl.theme.MapsTrackColor
 import tfg.sal.tripl.theme.SecondaryColor
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ItineraryScreen(
     viewModel: ItineraryViewModel,
@@ -265,7 +267,7 @@ fun typeCheckBox(types: List<POITypes>, viewModel: ItineraryViewModel) {
 fun ItineraryMap(
     viewModel: ItineraryViewModel
 ) {
-    val poiMarkerCoordinates: List<LatLng> by viewModel.poiMarkerCoordinates.observeAsState(initial = listOf())
+    val poiMarkerCoordinates: List<TriplLatLng> by viewModel.poiMarkerCoordinates.observeAsState(initial = listOf())
     val filteredPois: List<POIResponse> by viewModel.filteredPois.observeAsState(initial = listOf())
     val cameraPositionState: CameraPositionState by viewModel.cps.observeAsState(initial = CameraPositionState())
     val context = LocalContext.current
@@ -286,7 +288,7 @@ fun ItineraryMap(
             }
         }
         Polyline(
-            points = poiMarkerCoordinates,
+            points = poiMarkerCoordinates.map { LatLng(it.latitude, it.longitude) },
             geodesic = true,
             color = MapsTrackColor,
             visible = true

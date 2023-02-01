@@ -54,6 +54,7 @@
     <string name="natural">Nature</string>
     <string name="other">Other</string>
     <string name="hide_menu">Close</string>
-    <string name="no_saved_itineraries">Oops, no saved itineraries found...</string>
+    <string name="no_saved_itineraries">Oops, no saved itineraries found…</string>
     <string name="support_content">For further questions contact the support team at this email address:</string>
+    <string name="number_pois_saved_itinerary">points of interest</string>
 </resources>

@@ -3,6 +3,9 @@ package tfg.sal.tripl.appcontent.login.domain
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FireBaseViewModel @Inject constructor(private val repository: FireBaseAuthRepository) :
     ViewModel() {
+
+    val db = Firebase.firestore
 
     private val _loginFlow = MutableStateFlow<FireBaseAuthResource<FirebaseUser>?>(null)
     val loginFlow: StateFlow<FireBaseAuthResource<FirebaseUser>?> = _loginFlow
@@ -55,6 +60,10 @@ class FireBaseViewModel @Inject constructor(private val repository: FireBaseAuth
             val result = repository.recoverPassword(email)
             _recoverPasswordFlow.value = result
         }
+    }
+
+    fun firestore(): FirebaseFirestore {
+        return db
     }
 
     fun logout() {
