@@ -1,4 +1,4 @@
-package tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.logininfo.ui
+package tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -19,7 +19,9 @@ import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseUser
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
+import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.logininfo.ui.LoginInfoViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.BackHeader
+import tfg.sal.tripl.appcontent.profile.profileoptions.settings.ui.SettingsViewModel
 import tfg.sal.tripl.theme.PrimaryColorDay
 import tfg.sal.tripl.theme.PrimaryColorNight
 import tfg.sal.tripl.theme.SecondaryColor
@@ -28,6 +30,7 @@ import tfg.sal.tripl.theme.SecondaryTextColor
 @Composable
 fun LoginInfoScreen(
     viewModel: LoginInfoViewModel,
+    settingsViewModel: SettingsViewModel,
     fireBaseViewModel: FireBaseViewModel?,
     navigationController: NavHostController
 ) {
@@ -44,7 +47,7 @@ fun LoginInfoScreen(
             )
         }
         Spacer(modifier = Modifier.padding(16.dp))
-        LoginInfoBody(Modifier.padding(16.dp), viewModel, user)
+        LoginInfoBody(Modifier.padding(16.dp), viewModel, settingsViewModel, user)
     }
 }
 
@@ -52,13 +55,12 @@ fun LoginInfoScreen(
 fun LoginInfoBody(
     modifier: Modifier,
     viewModel: LoginInfoViewModel,
+    settingsViewModel: SettingsViewModel,
     user: FirebaseUser?
 ) {
     val userName = viewModel.getUserName(user?.displayName ?: "")
-    var color = PrimaryColorDay
-    if (isSystemInDarkTheme()) {
-        color = PrimaryColorNight
-    }
+    val color =
+        if (settingsViewModel.darkMode.value == "enabled") PrimaryColorNight else PrimaryColorDay
 
     Column(
         modifier = modifier,

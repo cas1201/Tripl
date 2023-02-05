@@ -21,7 +21,7 @@ import tfg.sal.tripl.appcontent.login.ui.LoginScreen
 import tfg.sal.tripl.appcontent.login.ui.LoginViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.usermanual.ui.PreferencesScreen
 import tfg.sal.tripl.appcontent.profile.profileoptions.usermanual.ui.PreferencesViewModel
-import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.logininfo.ui.LoginInfoScreen
+import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.ui.LoginInfoScreen
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.logininfo.ui.LoginInfoViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.ProfileDetailsScreen
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.ProfileDetailsViewModel
@@ -142,6 +142,7 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.LoginInfoScreen.route) {
                             LoginInfoScreen(
                                 loginInfoViewModel,
+                                settingsViewModel,
                                 fireBaseViewModel,
                                 navigationController
                             )

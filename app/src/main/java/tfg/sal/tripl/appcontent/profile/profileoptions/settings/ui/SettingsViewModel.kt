@@ -23,9 +23,6 @@ class SettingsViewModel @Inject constructor(private val app: Application) : View
     private val _darkMode = MutableLiveData<String>()
     val darkMode: LiveData<String> = _darkMode
 
-    private val _language = MutableLiveData<String>()
-    val language: LiveData<String> = _language
-
     fun setSwitch(isSystemInDarkMode: Boolean) {
         when(sharedPreferences.getString("dark_mode", "none")) {
             "enabled" -> {
@@ -44,14 +41,6 @@ class SettingsViewModel @Inject constructor(private val app: Application) : View
         navigationController.navigate(Routes.ProfileScreen.route) {
             popUpTo(Routes.SettingsScreen.route) { inclusive = true }
         }
-    }
-
-    fun onLanguageChange(selectedLanguage: String) {
-        val language =
-            if (selectedLanguage == "Español" || selectedLanguage == "Spanish") "es" else "en"
-        _language.value = selectedLanguage
-        editor.putString("language", language)
-        editor.apply()
     }
 
     fun onSwitchChange(isSwitchChecked: Boolean) {

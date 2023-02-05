@@ -55,22 +55,12 @@ fun BackHeader(onBackPressed: () -> Unit) {
 @Composable
 fun SettingsBody(viewModel: SettingsViewModel) {
     val switchChecked: Boolean by viewModel.switchChecked.observeAsState(initial = false)
-    val language: String by viewModel.language.observeAsState(initial = Locale.getDefault().displayLanguage)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
     ) {
-        Text(
-            text = stringResource(id = R.string.language_choice),
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 23.sp
-        )
-        Spacer(modifier = Modifier.padding(8.dp))
-        for (l in listOf(R.string.spanish, R.string.english)) {
-            languageRadioButton(selectedLanguage = stringResource(l), currentLanguage= language, viewModel = viewModel)
-        }
         Spacer(modifier = Modifier.padding(16.dp))
         Text(
             text = stringResource(id = R.string.mode_choice),
@@ -100,16 +90,5 @@ fun SettingsBody(viewModel: SettingsViewModel) {
             )
             Spacer(modifier = Modifier.weight(1f))
         }
-    }
-}
-
-@Composable
-fun languageRadioButton(selectedLanguage: String, currentLanguage: String, viewModel: SettingsViewModel) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        RadioButton(
-            selected = selectedLanguage.lowercase() == currentLanguage.lowercase(),
-            onClick = { viewModel.onLanguageChange(selectedLanguage) }
-        )
-        Text(text = selectedLanguage)
     }
 }
