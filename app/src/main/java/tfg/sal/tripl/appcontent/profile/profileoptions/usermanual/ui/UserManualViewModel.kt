@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import tfg.sal.tripl.core.Routes
 
-class PreferencesViewModel : ViewModel() {
+class UserManualViewModel : ViewModel() {
     fun onBackPressed(navigationController: NavHostController) {
         navigationController.navigate(Routes.ProfileScreen.route) {
             popUpTo(Routes.PreferencesScreen.route) { inclusive = true }

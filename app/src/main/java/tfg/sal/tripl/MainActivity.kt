@@ -20,7 +20,7 @@ import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.login.ui.LoginScreen
 import tfg.sal.tripl.appcontent.login.ui.LoginViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.usermanual.ui.PreferencesScreen
-import tfg.sal.tripl.appcontent.profile.profileoptions.usermanual.ui.PreferencesViewModel
+import tfg.sal.tripl.appcontent.profile.profileoptions.usermanual.ui.UserManualViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.ui.LoginInfoScreen
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.logininfo.ui.LoginInfoViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.ProfileDetailsScreen
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
     private val profileViewModel: ProfileViewModel by viewModels()
     private val profileDetailsViewModel: ProfileDetailsViewModel by viewModels()
     private val loginInfoViewModel: LoginInfoViewModel by viewModels()
-    private val preferencesViewModel: PreferencesViewModel by viewModels()
+    private val userManualViewModel: UserManualViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val supportViewModel: SupportViewModel by viewModels()
 
@@ -149,8 +149,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Routes.PreferencesScreen.route) {
                             PreferencesScreen(
-                                preferencesViewModel,
-                                fireBaseViewModel,
+                                userManualViewModel,
                                 navigationController
                             )
                         }
