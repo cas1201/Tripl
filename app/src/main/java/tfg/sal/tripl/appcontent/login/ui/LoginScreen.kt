@@ -286,12 +286,22 @@ fun ForgotPassword(
 }
 
 @Composable
-fun TriplButton(text: String, buttonEnable: Boolean, onButtonClick: () -> Unit) {
+fun TriplButton(
+    text: String,
+    buttonEnable: Boolean,
+    alertDialog: Boolean = false,
+    onButtonClick: () -> Unit
+) {
+    val modifier =
+        if (!alertDialog) Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+        else Modifier
+            .height(48.dp)
+            .width(100.dp)
     Button(
         onClick = { onButtonClick() },
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
+        modifier = modifier,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color(0xFF00897b)
         ),

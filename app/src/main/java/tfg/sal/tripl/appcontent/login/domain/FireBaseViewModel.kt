@@ -62,10 +62,6 @@ class FireBaseViewModel @Inject constructor(private val repository: FireBaseAuth
         }
     }
 
-    fun firestore(): FirebaseFirestore {
-        return db
-    }
-
     fun logout() {
         repository.logout()
         _loginFlow.value = null

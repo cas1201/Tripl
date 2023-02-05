@@ -1,4 +1,4 @@
-package tfg.sal.tripl.appcontent.profile.profileoptions.preferences.ui
+package tfg.sal.tripl.appcontent.profile.profileoptions.usermanual.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController

@@ -1,4 +1,4 @@
-package tfg.sal.tripl.appcontent.profile.profileoptions.preferences.ui
+package tfg.sal.tripl.appcontent.profile.profileoptions.usermanual.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
@@ -17,15 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.support.ui.BackHeader
-import tfg.sal.tripl.appcontent.profile.profileoptions.support.ui.SupportBoddy
-import tfg.sal.tripl.appcontent.profile.profileoptions.support.ui.SupportViewModel
-import tfg.sal.tripl.theme.PrimaryTextColor
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable

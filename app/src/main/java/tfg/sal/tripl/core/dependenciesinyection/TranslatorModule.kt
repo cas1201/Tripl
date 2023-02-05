@@ -30,7 +30,7 @@ class TranslatorModule {
     @Singleton
     @Provides
     @Named("EsEnTranslator")
-    fun provideEsRuTranslator(): Translator {
+    fun provideEsEnTranslator(): Translator {
         val options = TranslatorOptions.Builder()
             .setSourceLanguage(TranslateLanguage.SPANISH)
             .setTargetLanguage(TranslateLanguage.ENGLISH)

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -23,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -48,6 +50,8 @@ import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.TriplTextField
 import tfg.sal.tripl.appcontent.login.ui.headerText
 import tfg.sal.tripl.core.Routes
+import tfg.sal.tripl.theme.PrimaryColorNight
+import java.util.*
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -158,7 +162,7 @@ fun HomeContentRecommendedDestinations(
     navigationController: NavHostController
 ) {
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-        TriplRecommendedDestinations(modifier, viewModel, itineraryViewModel,navigationController)
+        TriplRecommendedDestinations(modifier, viewModel, itineraryViewModel, navigationController)
         Spacer(modifier = Modifier.padding(35.dp))
     }
 }
@@ -341,29 +345,33 @@ fun TriplRecommendedDestinations(
     Column {
         if (recommendedFlags.isNotEmpty()) {
             for (rf in recommendedFlags) {
-                Column(Modifier.clickable {
-                    viewModel.onSearchTrip(
-                        navigationController,
-                        itineraryViewModel,
-                        viewModel.sanitizeFlagMap(rf.keys)
-                    )
-                }
-                ) {
-                    AsyncImage(
-                        modifier = modifier.fillMaxWidth().height(180.dp),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(viewModel.sanitizeFlagMap(rf.values))
-                            .decoderFactory(SvgDecoder.Factory())
-                            .build(),
-                        contentDescription = viewModel.sanitizeFlagMap(rf.keys),
-                        contentScale = ContentScale.FillWidth
-                    )
-                    Spacer(modifier = Modifier.padding(1.dp))
-                    Text(
-                        text = viewModel.sanitizeFlagMap(rf.keys).uppercase(),
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        textAlign = TextAlign.Center
-                    )
+                Card(elevation = 10.dp) {
+                    Column(Modifier.clickable {
+                        viewModel.onSearchTrip(
+                            navigationController,
+                            itineraryViewModel,
+                            viewModel.sanitizeFlagMap(rf.keys)
+                        )
+                    }
+                    ) {
+                        AsyncImage(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .height(180.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(viewModel.sanitizeFlagMap(rf.values))
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = viewModel.sanitizeFlagMap(rf.keys),
+                            contentScale = ContentScale.FillWidth
+                        )
+                        Spacer(modifier = Modifier.padding(1.dp))
+                        Text(
+                            text = viewModel.sanitizeFlagMap(rf.keys).uppercase(),
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.padding(8.dp))
             }

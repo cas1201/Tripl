@@ -29,9 +29,7 @@ fun SplashScreen(
     navigationController: NavHostController
 ) {
     val continueToHome: Boolean by viewModel.continueToHome.observeAsState(initial = false)
-
     viewModel.getCountries(homeViewModel)
-    //homeViewModel.setSuggestedFlags()
 
     LaunchedEffect(key1 = continueToHome) {
         viewModel.initializeUser(

@@ -17,19 +17,19 @@ class ProfileViewModel @Inject constructor() :
 
         profileList = (profileList + GridModal(
             R.string.profile_details,
-            R.drawable.logo
+            R.drawable.profile_details_vector
         )) as ArrayList<GridModal>
         profileList = (profileList + GridModal(
-            R.string.preferences,
-            R.drawable.logo
+            R.string.user_manual,
+            R.drawable.user_manual_vector
         )) as ArrayList<GridModal>
         profileList = (profileList + GridModal(
             R.string.settings,
-            R.drawable.logo
+            R.drawable.settings_vector
         )) as ArrayList<GridModal>
         profileList = (profileList + GridModal(
             R.string.support,
-            R.drawable.logo
+            R.drawable.support_vector
         )) as ArrayList<GridModal>
         return profileList
     }
@@ -37,8 +37,8 @@ class ProfileViewModel @Inject constructor() :
     fun onCardClick(optionName: Int, navigationController: NavHostController) {
         when (optionName) {
             R.string.profile_details -> navigationController.navigate(Routes.ProfileDetailsScreen.route)
-            R.string.preferences -> navigationController.navigate(Routes.PreferencesScreen.route)
             R.string.settings -> navigationController.navigate(Routes.SettingsScreen.route)
+            R.string.user_manual -> navigationController.navigate(Routes.PreferencesScreen.route)
             R.string.support -> navigationController.navigate(Routes.SupportScreen.route)
         }
     }

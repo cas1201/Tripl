@@ -30,7 +30,7 @@ class HomeViewModel @Inject constructor(
     val destinationCountry: LiveData<String> = _destinationCountry
 
     private val _destinationCountryIso = MutableLiveData<String>()
-    val destinationCountryIso: LiveData<String> = _destinationCountryIso
+    private val destinationCountryIso: LiveData<String> = _destinationCountryIso
 
     private val _destinationCity = MutableLiveData<String>()
     val destinationCity: LiveData<String> = _destinationCity
@@ -71,8 +71,8 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
-        setFlags(countries)
         countries?.removeAll { it.countryCities == null }
+        setFlags(countries)
         _countries.value = countries
     }
 
@@ -176,11 +176,11 @@ class HomeViewModel @Inject constructor(
         return valid
     }
 
-    fun translateToSpanish(text: String): String {
+    private fun translateToSpanish(text: String): String {
         var translatedText = ""
         enesTranslator.downloadModelIfNeeded(downloadConditions)
             .addOnCompleteListener {
-                enesTranslator.translate("text")
+                enesTranslator.translate(text)
                     .addOnCompleteListener { translation ->
                         translatedText = translation.result
                         Log.i("traductor", translation.result)
@@ -208,32 +208,4 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-/*
-fun onStartDateChange(startDate: String) {
-    if (startDate != "") {
-        _startDate.value = startDate
-    }
-}
-
-fun onEndDateChange(endDate: String) {
-    if (endDate != "") {
-        _endDate.value = endDate
-    }
-}
-
-private fun dateValidation(startDate: String?, endDate: String? = null): Boolean {
-    val dateCompare = endDate?.let { startDate?.compareTo(it) }
-    return if (dateCompare != null) {
-        when {
-            dateCompare <= 0 -> {
-                true
-            }
-            else -> {
-                false
-            }
-        }
-    } else {
-        false
-    }
-}*/
 }

@@ -19,8 +19,8 @@ import tfg.sal.tripl.appcontent.home.ui.HomeViewModel
 import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.login.ui.LoginScreen
 import tfg.sal.tripl.appcontent.login.ui.LoginViewModel
-import tfg.sal.tripl.appcontent.profile.profileoptions.preferences.ui.PreferencesScreen
-import tfg.sal.tripl.appcontent.profile.profileoptions.preferences.ui.PreferencesViewModel
+import tfg.sal.tripl.appcontent.profile.profileoptions.usermanual.ui.PreferencesScreen
+import tfg.sal.tripl.appcontent.profile.profileoptions.usermanual.ui.PreferencesViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.logininfo.ui.LoginInfoScreen
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.logininfo.ui.LoginInfoViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.ProfileDetailsScreen
@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            TriplTheme {
+            TriplTheme(settingsViewModel) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -127,6 +127,7 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.ProfileScreen.route) {
                             ProfileScreen(
                                 profileViewModel,
+                                settingsViewModel,
                                 fireBaseViewModel,
                                 navigationController
                             )
@@ -155,7 +156,6 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.SettingsScreen.route) {
                             SettingsScreen(
                                 settingsViewModel,
-                                fireBaseViewModel,
                                 navigationController
                             )
                         }

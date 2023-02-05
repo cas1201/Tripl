@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,12 +18,14 @@ import tfg.sal.tripl.appcontent.home.itinerary.ui.ItineraryViewModel
 import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.trip.data.SavedItinerary
 import tfg.sal.tripl.core.Routes
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class TripViewModel @Inject constructor(
     private val coordinatesUseCase: CoordinatesUseCase,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val firebase: FirebaseAuth
 ) :
     ViewModel() {
 
@@ -30,6 +33,20 @@ class TripViewModel @Inject constructor(
 
     private val _savedItineraries = MutableLiveData<List<SavedItinerary>>()
     val savedItineraries: LiveData<List<SavedItinerary>> = _savedItineraries
+
+    private val _cardSavedItinerary = MutableLiveData<SavedItinerary>()
+    val cardSavedItinerary: LiveData<SavedItinerary> = _cardSavedItinerary
+
+    private val _showAlertDialog = MutableLiveData<Boolean>()
+    val showAlertDialog: LiveData<Boolean> = _showAlertDialog
+
+    fun showAlertDialog(show: Boolean) {
+        _showAlertDialog.value = show
+    }
+
+    fun cardSavedItinerary(si: SavedItinerary) {
+        _cardSavedItinerary.value = si
+    }
 
     fun saveItinerary(
         filteredPois: List<POIResponse>?,
@@ -39,8 +56,8 @@ class TripViewModel @Inject constructor(
         countryCity: String?,
         countryFlag: String
     ) {
-        val sisl = mutableListOf<SavedItinerary>()
         val si = SavedItinerary(
+            UUID.randomUUID().toString(),
             filteredPois,
             poiMarkerCoordinates,
             cameraPosition,
@@ -48,39 +65,40 @@ class TripViewModel @Inject constructor(
             countryCity,
             countryFlag
         )
-        sisl.add(si)
-        savedItineraries.value?.forEach { savedItinerary ->
-            if (si.pois?.sortedBy { it.name } == savedItinerary.pois?.sortedBy { it.name }) {
-                Log.i(
-                    "saveitinerary",
-                    "Error al añadir itinerario porque es igual que uno que ya existe"
-                )
-                // error al añadir itinerario porque es igual que uno que ya existe
-            } else {
-                sisl.add(savedItinerary)
-            }
-        }
-        _savedItineraries.value = sisl
         firestoreSaveItinerary(si)
     }
 
     fun firestoreSaveItinerary(si: SavedItinerary) {
-        firestore.collection(savedItinerariesCollectionName).document(si.countryName!!)
+        firestore.collection("$savedItinerariesCollectionName@${firebase.currentUser!!.uid}")
+            .document(si.countryName!! + "@" + si.siId!!)
             .set(si)
+            .addOnSuccessListener {
+
+            }
+            .addOnFailureListener {
+
+            }
     }
 
     fun firestoreGetItinerary() {
-        if (savedItineraries.value == null || savedItineraries.value?.isEmpty() == true) {
-            firestore.collection(savedItinerariesCollectionName)
-                .get()
-                .addOnSuccessListener {
-                    _savedItineraries.value = it.toObjects(SavedItinerary::class.java)
-                }
-        }
+        firestore.collection("$savedItinerariesCollectionName@${firebase.currentUser!!.uid}")
+            .get()
+            .addOnSuccessListener {
+                _savedItineraries.value = it.toObjects(SavedItinerary::class.java).asReversed()
+            }.addOnFailureListener {
+
+            }
     }
 
     fun deleteItinerary(itinerary: SavedItinerary) {
+        firestore.collection("$savedItinerariesCollectionName@${firebase.currentUser!!.uid}")
+            .document(itinerary.countryName!! + "@" + itinerary.siId!!)
+            .delete()
+            .addOnSuccessListener {
+                firestoreGetItinerary()
+            }.addOnFailureListener {
 
+            }
     }
 
     fun onSavedItineraryCardClick(

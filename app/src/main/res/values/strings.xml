@@ -27,7 +27,7 @@
     <string name="profile_details">Detalles de perfil</string>
     <string name="settings">Ajustes</string>
     <string name="support">Soporte</string>
-    <string name="preferences">Preferencias</string>
+    <string name="user_manual">Manual de usuario</string>
     <string name="destination_country">País de destino</string>
     <string name="destination_city">Ciudad de destino</string>
     <string name="destination_not_found">Destino no encontrado</string>
@@ -70,7 +70,18 @@
     <string name="other">Otro</string>
     <string name="hide_menu">Cerrar</string>
     <string name="no_saved_itineraries">Vaya, no se han encontrado itinerarios guardados…</string>
-    <string name="support_content">Para consultas contactar al equipo de soporte mediante la dirección de correo:</string>
+    <string name="support_content">Gracias por usar nuestra aplicación!\n\nPara consultas contactar al equipo de soporte mediante la dirección de correo:</string>
     <string name="support_email" translatable="false">aragones.lozano@gmail.com</string>
     <string name="number_pois_saved_itinerary">puntos de interés</string>
+    <string name="delete_itinerary">Borrar itinerario</string>
+    <string name="delete_itinerary_dialog_text">¿Seguro que quieres borrar este itinerario?</string>
+    <string name="delete_itinerary_dialog">Borrar itinerario</string>
+    <string name="delete_itinerary_dialog_yes">Sí</string>
+    <string name="delete_itinerary_dialog_no">No</string>
+    <string name="spanish">Español</string>
+    <string name="english">Inglés</string>
+    <string name="light_mode">Modo claro</string>
+    <string name="dark_mode">Modo oscuro</string>
+    <string name="language_choice">Elección de idioma</string>
+    <string name="mode_choice">Elección de modo</string>
 </resources>

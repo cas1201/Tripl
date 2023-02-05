@@ -29,6 +29,7 @@ import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.data.network.response.POIResponse
 import tfg.sal.tripl.appcontent.home.itinerary.data.POITypes
 import tfg.sal.tripl.appcontent.home.itinerary.data.TriplLatLng
+import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.TriplTextField
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.Divisor
@@ -47,6 +48,7 @@ fun ItineraryScreen(
     val poisRating: Int by viewModel.poisRating.observeAsState(initial = -1)
     val poisDistance: Float by viewModel.poisDistance.observeAsState(initial = 25f)
     val showMap: Boolean by viewModel.showMap.observeAsState(initial = false)
+    val errorRetrievingDestination: Boolean by viewModel.errorRetrievingDestination.observeAsState(initial = false)
 
     BackHandler {
         viewModel.onBackPressed(navigationController)
@@ -80,6 +82,7 @@ fun ItineraryScreen(
     } else {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(color = SecondaryColor)
+            if (errorRetrievingDestination) { viewModel.errorRetrievingDestination(navigationController) }
         }
     }
 }

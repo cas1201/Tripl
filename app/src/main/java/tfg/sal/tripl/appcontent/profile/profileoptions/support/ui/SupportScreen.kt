@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
@@ -53,15 +54,22 @@ fun SupportBoddy(viewModel: SupportViewModel) {
     Box(
         Modifier
             .fillMaxSize()
-            .padding(20.dp), contentAlignment = Alignment.Center) {
+            .padding(bottom = 30.dp), contentAlignment = Alignment.Center
+    ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = stringResource(id = R.string.support_content), textAlign = TextAlign.Center)
+            Text(
+                modifier = Modifier.padding(20.dp),
+                text = stringResource(id = R.string.support_content),
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp
+            )
             Text(
                 text = supportEmail,
                 textAlign = TextAlign.Center,
+                fontSize = 20.sp,
                 color = PrimaryTextColor,
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable { viewModel.sendEmail(supportEmail) }
+                modifier = Modifier.padding(horizontal = 20.dp).clickable { viewModel.sendEmail(supportEmail) }
             )
         }
     }

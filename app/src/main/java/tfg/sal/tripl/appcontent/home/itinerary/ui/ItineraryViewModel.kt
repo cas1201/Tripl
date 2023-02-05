@@ -9,13 +9,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.maps.android.compose.CameraPositionState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import tfg.sal.tripl.appcontent.home.data.countries.Coordinates
 import tfg.sal.tripl.appcontent.home.data.network.response.POIResponse
 import tfg.sal.tripl.appcontent.home.data.poi.PointsOfInterest
@@ -26,7 +29,10 @@ import tfg.sal.tripl.appcontent.home.ui.HomeViewModel
 import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.trip.ui.TripViewModel
 import tfg.sal.tripl.core.Routes
+import java.util.*
+import java.util.logging.Handler
 import javax.inject.Inject
+import kotlin.concurrent.schedule
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -45,6 +51,9 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
 
     private val _dropDownMenuExpanded = MutableLiveData<Boolean>()
     val dropDownMenuExpanded: LiveData<Boolean> = _dropDownMenuExpanded
+
+    private val _errorRetrievingDestination = MutableLiveData<Boolean>()
+    val errorRetrievingDestination: LiveData<Boolean> = _errorRetrievingDestination
 
     private val _showMap = MutableLiveData<Boolean>()
     val showMap: LiveData<Boolean> = _showMap
@@ -97,6 +106,13 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     fun onBackPressed(navigationController: NavHostController) {
         navigationController.navigate(Routes.HomeScreen.route) {
             popUpTo(Routes.HomeScreen.route) { inclusive = true }
+        }
+    }
+
+    fun errorRetrievingDestination(navigationController: NavHostController) {
+        _errorRetrievingDestination.value = false
+        navigationController.navigate(Routes.HomeScreen.route) {
+            popUpTo(Routes.ItineraryScreen.route) { inclusive = true }
         }
     }
 
@@ -219,7 +235,8 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
                     setCameraPosition()
                     _showMap.value = true
                 } else {
-                    //error consultando pois
+                    delay(2000)
+                    _errorRetrievingDestination.value = true
                 }
             }
         }
@@ -263,8 +280,6 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
                         + (it.location.lonPoint - initialPoi.location.lonPoint).pow(2)
             )
         }
-        Log.i("orderedpois", "${fPoisOrdered}")
-        Log.i("orderedpois", "${orderPois(fPoisOrdered)}")
         _filteredPois.value = orderPois(fPoisOrdered)
         _poiMarkerCoordinates.value = getPoisMarkerCoordinates(filteredPois.value)
     }
