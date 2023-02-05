@@ -38,7 +38,7 @@ fun TripScreen(
     itineraryViewModel: ItineraryViewModel,
     navigationController: NavHostController
 ) {
-    viewModel.firestoreGetItinerary()
+    viewModel.firestoreGetItinerary(LocalContext.current)
 
     val showAlertDialog: Boolean by viewModel.showAlertDialog.observeAsState(initial = false)
     val cardSavedItinerary: SavedItinerary by viewModel.cardSavedItinerary.observeAsState(initial = SavedItinerary())
@@ -98,6 +98,7 @@ fun TripBody(
     itineraryViewModel: ItineraryViewModel,
     navigationController: NavHostController
 ) {
+    val context = LocalContext.current
     val savedItineraries: List<SavedItinerary> by viewModel.savedItineraries.observeAsState(initial = listOf())
 
     if (savedItineraries.isEmpty()) {
@@ -119,6 +120,7 @@ fun TripBody(
                         .height(150.dp)
                         .clickable {
                             viewModel.onSavedItineraryCardClick(
+                                context,
                                 si,
                                 itineraryViewModel,
                                 navigationController
@@ -184,6 +186,7 @@ fun SavedItineraryCard(si: SavedItinerary, showAlertDialog: Boolean, viewModel: 
 
 @Composable
 fun DeleteItineraryAlertDialog(si: SavedItinerary, showAlertDialog: Boolean, viewModel: TripViewModel) {
+    val context = LocalContext.current
     AlertDialog(
         onDismissRequest = { viewModel.showAlertDialog(!showAlertDialog) },
         title = {
@@ -199,7 +202,7 @@ fun DeleteItineraryAlertDialog(si: SavedItinerary, showAlertDialog: Boolean, vie
                     buttonEnable = true,
                     alertDialog = true
                 ) {
-                    viewModel.deleteItinerary(si)
+                    viewModel.deleteItinerary(context, si)
                     viewModel.showAlertDialog(!showAlertDialog)
                 }
                 Spacer(modifier = Modifier.weight(1f))

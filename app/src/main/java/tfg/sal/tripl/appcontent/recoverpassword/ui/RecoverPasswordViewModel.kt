@@ -1,5 +1,7 @@
 package tfg.sal.tripl.appcontent.recoverpassword.ui
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,6 +19,14 @@ class RecoverPasswordViewModel @Inject constructor() : ViewModel() {
 
     private val _recoverPasswordEnable = MutableLiveData<Boolean>()
     val recoverPasswordEnable: LiveData<Boolean> = _recoverPasswordEnable
+
+    private val _recoverPasswordPressed = MutableLiveData<Boolean>()
+    val recoverPasswordPressed: LiveData<Boolean> = _recoverPasswordPressed
+
+    fun showToast(context: Context, message: Int) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        _recoverPasswordPressed.value = false
+    }
 
     fun onBackPressed(navigationController: NavHostController) {
         clearTextFields()
@@ -44,6 +54,7 @@ class RecoverPasswordViewModel @Inject constructor() : ViewModel() {
 
     fun onRecoverPasswordSelected(navigationController: NavHostController) {
         clearTextFields()
+        _recoverPasswordPressed.value = true
         navigationController.navigate(Routes.LoginScreen.route) {
             popUpTo(Routes.LoginScreen.route) { inclusive = true }
         }

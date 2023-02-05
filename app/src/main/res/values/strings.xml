@@ -35,7 +35,6 @@
     <string name="end_date">Fecha fin</string>
     <string name="select_date">Seleccionar fecha</string>
     <string name="search">Buscar</string>
-    <string name="networ_error">Error desconocido al realizar petición de red</string>
     <string name="login_error">Email o contraseña incorrectos</string>
     <string name="signup_error">Error al crear el usuario, inténtelo de nuevo</string>
     <string name="recover_password_error">Error al enviar mail de recuperación de contraseña</string>
@@ -84,4 +83,9 @@
     <string name="dark_mode">Modo oscuro</string>
     <string name="language_choice">Elección de idioma</string>
     <string name="mode_choice">Elección de modo</string>
+    <string name="get_destination_error">Error al cargar el destino</string>
+    <string name="save_itinerary_error">Error al guardar el itinerario</string>
+    <string name="delete_itinerary_error">Error al borrar el itinerario</string>
+    <string name="get_itinerary_error">Error al cargar los itinerarios guardados</string>
+    <string name="itinerary_already_exists">El itinerario ya existe, error al guardar</string>
 </resources>

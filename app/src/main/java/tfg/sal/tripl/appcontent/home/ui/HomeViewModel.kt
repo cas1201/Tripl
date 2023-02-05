@@ -1,5 +1,6 @@
 package tfg.sal.tripl.appcontent.home.ui
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.lifecycle.LiveData
@@ -109,6 +110,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onSearchTrip(
+        context: Context,
         navigationController: NavHostController,
         itineraryViewModel: ItineraryViewModel,
         cardDestination: String? = null
@@ -121,7 +123,7 @@ class HomeViewModel @Inject constructor(
                         destinationCity.value!!,
                         destinationCountryIso.value!!
                     )
-                    itineraryViewModel.getPOI(coordinates)
+                    itineraryViewModel.getPOI(context, coordinates)
                     navigationController.navigate(Routes.ItineraryScreen.route) {
                         itineraryViewModel.saveFlags(countryFlags.value)
                         itineraryViewModel.saveDestination(destinationCountry.value, destinationCity.value)
@@ -143,7 +145,7 @@ class HomeViewModel @Inject constructor(
                     destinationCity.value!!,
                     destinationCountryIso.value!!
                 )
-                itineraryViewModel.getPOI(coordinates)
+                itineraryViewModel.getPOI(context, coordinates)
                 navigationController.navigate(Routes.ItineraryScreen.route) {
                     itineraryViewModel.saveFlags(countryFlags.value)
                     itineraryViewModel.saveDestination(destinationCountry.value, destinationCity.value)

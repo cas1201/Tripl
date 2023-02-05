@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.internal.wait
+import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.data.countries.Coordinates
 import tfg.sal.tripl.appcontent.home.data.network.response.POIResponse
 import tfg.sal.tripl.appcontent.home.data.poi.PointsOfInterest
@@ -103,13 +105,17 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     private val _cps = MutableLiveData<CameraPositionState>()
     val cps: LiveData<CameraPositionState> = _cps
 
+    fun showToast(context: Context, message: Int) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
     fun onBackPressed(navigationController: NavHostController) {
         navigationController.navigate(Routes.HomeScreen.route) {
             popUpTo(Routes.HomeScreen.route) { inclusive = true }
         }
     }
 
-    fun errorRetrievingDestination(navigationController: NavHostController) {
+    fun errorRetrievingDestination(context: Context, navigationController: NavHostController) {
         _errorRetrievingDestination.value = false
         navigationController.navigate(Routes.HomeScreen.route) {
             popUpTo(Routes.ItineraryScreen.route) { inclusive = true }
@@ -203,6 +209,7 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     }
 
     fun getPOI(
+        context: Context,
         coordinates: Coordinates,
         siPois: List<POIResponse>? = null,
         siPoisMarker: List<TriplLatLng>? = null,
@@ -217,9 +224,6 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
                     coord[0].lon
                 )
                 _pois.value = getPois
-            } else {
-                Log.i("error", "Coordenadas (itineraryvm linea 177)")
-                //error por coordenadas
             }
             if (siPois != null) {
                 _filteredPois.value = siPois
@@ -236,6 +240,7 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
                     _showMap.value = true
                 } else {
                     delay(2000)
+                    showToast(context, R.string.get_destination_error)
                     _errorRetrievingDestination.value = true
                 }
             }
@@ -420,6 +425,7 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     }
 
     fun onItinerarySave(
+        context: Context,
         tripViewModel: TripViewModel,
         navigationController: NavHostController
     ) {
@@ -430,6 +436,7 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
             }
         }
         tripViewModel.saveItinerary(
+            context,
             filteredPois.value,
             poiMarkerCoordinates.value,
             filteredPoisCameraPosition.value,

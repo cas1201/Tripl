@@ -1,5 +1,7 @@
 package tfg.sal.tripl.appcontent.signup.ui
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,6 +37,14 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
 
     private val _signupEnable = MutableLiveData<Boolean>()
     val signupEnable: LiveData<Boolean> = _signupEnable
+
+    private val _signUpPressed = MutableLiveData<Boolean>()
+    val signUpPressed: LiveData<Boolean> = _signUpPressed
+
+    fun showToast(context: Context, message: Int) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        _signUpPressed.value = false
+    }
 
     fun onBackPressed(navigationController: NavHostController) {
         clearTextFields()
@@ -90,6 +100,7 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
 
     fun onSignUpSelected(navigationController: NavHostController) {
         clearTextFields()
+        _signUpPressed.value = true
         navigationController.navigate(Routes.LoginScreen.route) {
             popUpTo(Routes.LoginScreen.route) { inclusive = true }
         }

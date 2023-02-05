@@ -1,5 +1,7 @@
 package tfg.sal.tripl.appcontent.login.ui
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,8 +23,16 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     private val _passwordVisible = MutableLiveData<Boolean>()
     val passwordVisible: LiveData<Boolean> = _passwordVisible
 
-    private val _loginEnable = MutableLiveData<Boolean>()
-    val loginEnable: LiveData<Boolean> = _loginEnable
+    private val _logInEnable = MutableLiveData<Boolean>()
+    val logInEnable: LiveData<Boolean> = _logInEnable
+
+    private val _signInPressed = MutableLiveData<Boolean>()
+    val signInPressed: LiveData<Boolean> = _signInPressed
+
+    fun showToast(context: Context, message: Int) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        _signInPressed.value = false
+    }
 
     fun onPasswordVisibleChange(passwordVisible: Boolean) {
         _passwordVisible.value = !passwordVisible
@@ -31,7 +41,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     fun onLoginChange(email: String, password: String) {
         _email.value = email
         _password.value = password
-        _loginEnable.value = isValidEmail(email) && isValidPassword(password)
+        _logInEnable.value = isValidEmail(email) && isValidPassword(password)
     }
 
     private fun isValidEmail(email: String): Boolean {
@@ -53,6 +63,7 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 
     fun onLoginSelected(navigationController: NavHostController) {
         clearTextFields()
+        _signInPressed.value = true
         navigationController.navigate(Routes.HomeScreen.route) {
             popUpTo(Routes.HomeScreen.route) { inclusive = true }
         }

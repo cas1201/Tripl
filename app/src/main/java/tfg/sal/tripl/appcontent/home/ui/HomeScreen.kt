@@ -141,6 +141,7 @@ fun HomeContentSearch(
     itineraryViewModel: ItineraryViewModel,
     navigationController: NavHostController
 ) {
+    val context = LocalContext.current
     Column(modifier = modifier) {
         TriplDropDownCountriesMenu(destinationCountry, viewModel, countries)
         Spacer(modifier = modifier)
@@ -149,8 +150,7 @@ fun HomeContentSearch(
         TriplButton(
             text = stringResource(id = R.string.search),
             buttonEnable = true
-        ) { viewModel.onSearchTrip(navigationController, itineraryViewModel) }
-
+        ) { viewModel.onSearchTrip(context, navigationController, itineraryViewModel) }
     }
 }
 
@@ -339,6 +339,7 @@ fun TriplRecommendedDestinations(
     itineraryViewModel: ItineraryViewModel,
     navigationController: NavHostController
 ) {
+    val context = LocalContext.current
     val recommendedFlags: List<Map<String, String>> by viewModel.suggestedFlags.observeAsState(
         initial = listOf()
     )
@@ -348,6 +349,7 @@ fun TriplRecommendedDestinations(
                 Card(elevation = 10.dp) {
                     Column(Modifier.clickable {
                         viewModel.onSearchTrip(
+                            context,
                             navigationController,
                             itineraryViewModel,
                             viewModel.sanitizeFlagMap(rf.keys)

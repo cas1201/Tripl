@@ -42,7 +42,7 @@ fun RecoverPasswordScreen(
             )
         }
         PasswordForgetBody(
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier.align(Alignment.TopCenter),
             viewModel = viewModel,
             fireBaseViewModel = fireBaseViewModel,
             recoverPasswordFlow = recoverPasswordFlow,
@@ -62,8 +62,9 @@ fun PasswordForgetBody(
 ) {
     val email: String by viewModel.email.observeAsState(initial = "")
     val recoverPasswordEnable: Boolean by viewModel.recoverPasswordEnable.observeAsState(initial = false)
+    val recoverPasswordPressed: Boolean by viewModel.recoverPasswordPressed.observeAsState(initial = false)
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(top = 100.dp)) {
         appLogo(size = 80, modifier = Modifier.align(Alignment.CenterHorizontally))
         headerText(
             size = 19,
@@ -92,11 +93,9 @@ fun PasswordForgetBody(
         recoverPasswordFlow?.value?.let {
             when (it) {
                 is FireBaseAuthResource.Error -> {
-                    Toast.makeText(
-                        LocalContext.current,
-                        R.string.recover_password_error,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if (recoverPasswordPressed) {
+                        viewModel.showToast(LocalContext.current, R.string.recover_password_error)
+                    }
                 }
                 FireBaseAuthResource.Loading -> {
                     Box(
@@ -108,11 +107,9 @@ fun PasswordForgetBody(
                     }
                 }
                 is FireBaseAuthResource.Success -> {
-                    Toast.makeText(
-                        LocalContext.current,
-                        R.string.recover_password_success,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    if (recoverPasswordPressed) {
+                        viewModel.showToast(LocalContext.current, R.string.recover_password_success)
+                    }
                     LaunchedEffect(Unit) {
                         viewModel.onRecoverPasswordSelected(navigationController)
                     }

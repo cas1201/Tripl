@@ -44,6 +44,7 @@ fun ItineraryScreen(
     tripViewModel: TripViewModel,
     navigationController: NavHostController
 ) {
+    val context = LocalContext.current
     val poisAmount: String by viewModel.poisAmount.observeAsState(initial = "")
     val poisRating: Int by viewModel.poisRating.observeAsState(initial = -1)
     val poisDistance: Float by viewModel.poisDistance.observeAsState(initial = 25f)
@@ -73,6 +74,7 @@ fun ItineraryScreen(
             bottomBar = {
                 ItinerarySave {
                     viewModel.onItinerarySave(
+                        context,
                         tripViewModel,
                         navigationController
                     )
@@ -82,7 +84,7 @@ fun ItineraryScreen(
     } else {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(color = SecondaryColor)
-            if (errorRetrievingDestination) { viewModel.errorRetrievingDestination(navigationController) }
+            if (errorRetrievingDestination) { viewModel.errorRetrievingDestination(context, navigationController) }
         }
     }
 }

@@ -1,7 +1,6 @@
 package tfg.sal.tripl.appcontent.login.ui
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -58,7 +57,7 @@ fun LoginScreen(
 
         CloseHeader(Modifier.align(Alignment.TopEnd), activity)
         LoginBody(
-            Modifier.align(Alignment.Center),
+            Modifier.align(Alignment.TopCenter),
             viewModel,
             fireBaseViewModel,
             loginFlow,
@@ -88,9 +87,10 @@ fun LoginBody(
     val email: String by viewModel.email.observeAsState(initial = "")
     val password: String by viewModel.password.observeAsState(initial = "")
     val passwordVisible: Boolean by viewModel.passwordVisible.observeAsState(initial = false)
-    val loginEnable: Boolean by viewModel.loginEnable.observeAsState(initial = false)
+    val loginEnable: Boolean by viewModel.logInEnable.observeAsState(initial = false)
+    val signInPressed: Boolean by viewModel.signInPressed.observeAsState(initial = false)
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(top = 60.dp)) {
         appLogo(size = 125, modifier = Modifier.align(Alignment.CenterHorizontally))
         headerText(
             size = 30,
@@ -121,17 +121,20 @@ fun LoginBody(
         TriplButton(
             text = stringResource(id = R.string.login),
             buttonEnable = loginEnable
-        ) { fireBaseViewModel?.login(email, password) }
-        Spacer(modifier = Modifier.padding(12.dp))
+        ) {
+            fireBaseViewModel?.login(email, password)
+        }
+        /*Spacer(modifier = Modifier.padding(12.dp))
         LoginDivider()
         Spacer(modifier = Modifier.padding(12.dp))
-        SocialLogin()
+        SocialLogin()*/
 
         loginFlow?.value?.let {
             when (it) {
                 is FireBaseAuthResource.Error -> {
-                    Toast.makeText(LocalContext.current, R.string.login_error, Toast.LENGTH_SHORT)
-                        .show()
+                    if (signInPressed) {
+                        viewModel.showToast(LocalContext.current, R.string.login_error)
+                    }
                 }
                 FireBaseAuthResource.Loading -> {
                     Box(

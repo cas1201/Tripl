@@ -79,6 +79,7 @@ fun SignUpBody(
     val passwordVisible: Boolean by viewModel.passwordVisible.observeAsState(initial = false)
     val passwordRepeatVisible: Boolean by viewModel.passwordRepeatVisible.observeAsState(initial = false)
     val signUpEnable: Boolean by viewModel.signupEnable.observeAsState(initial = false)
+    val signUpPressed: Boolean by viewModel.signUpPressed.observeAsState(initial = false)
 
     Column(modifier = modifier) {
         appLogo(size = 80, modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -185,8 +186,9 @@ fun SignUpBody(
         signupFlow?.value?.let {
             when (it) {
                 is FireBaseAuthResource.Error -> {
-                    Toast.makeText(LocalContext.current, R.string.signup_error, Toast.LENGTH_SHORT)
-                        .show()
+                    if (signUpPressed) {
+                        viewModel.showToast(LocalContext.current, R.string.signup_error)
+                    }
                 }
                 FireBaseAuthResource.Loading -> {
                     Box(
