@@ -88,4 +88,5 @@
     <string name="delete_itinerary_error">Error al borrar el itinerario</string>
     <string name="get_itinerary_error">Error al cargar los itinerarios guardados</string>
     <string name="itinerary_already_exists">El itinerario ya existe, error al guardar</string>
+    <string name="error_rendering_pdf">Error renderizando el PDF del manual de usuario</string>
 </resources>

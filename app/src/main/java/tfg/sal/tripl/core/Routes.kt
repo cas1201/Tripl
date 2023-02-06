@@ -13,7 +13,7 @@ sealed class Routes(val route: String) {
     object LoginInfoScreen : Routes("loginInfoScreen")
     object TravelerInfoScreen : Routes("travelerInfoScreen")
     object PaymentsScreen : Routes("paymentsScreen")
-    object PreferencesScreen : Routes("preferencesScreen")
+    object UserManualScreen : Routes("preferencesScreen")
     object SettingsScreen : Routes("settingsScreen")
     object SupportScreen : Routes("supportScreen")
 }

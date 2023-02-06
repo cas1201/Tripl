@@ -38,7 +38,7 @@ class ProfileViewModel @Inject constructor() :
         when (optionName) {
             R.string.profile_details -> navigationController.navigate(Routes.ProfileDetailsScreen.route)
             R.string.settings -> navigationController.navigate(Routes.SettingsScreen.route)
-            R.string.user_manual -> navigationController.navigate(Routes.PreferencesScreen.route)
+            R.string.user_manual -> navigationController.navigate(Routes.UserManualScreen.route)
             R.string.support -> navigationController.navigate(Routes.SupportScreen.route)
         }
     }

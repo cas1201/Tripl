@@ -147,7 +147,7 @@ class MainActivity : ComponentActivity() {
                                 navigationController
                             )
                         }
-                        composable(Routes.PreferencesScreen.route) {
+                        composable(Routes.UserManualScreen.route) {
                             PreferencesScreen(
                                 userManualViewModel,
                                 navigationController
