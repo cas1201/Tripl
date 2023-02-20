@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
-import tfg.sal.tripl.appcontent.profile.profileoptions.settings.ui.SettingsViewModel
 import tfg.sal.tripl.theme.PrimaryTextColor
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")

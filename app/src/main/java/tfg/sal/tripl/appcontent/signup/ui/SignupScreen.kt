@@ -1,6 +1,5 @@
 package tfg.sal.tripl.appcontent.signup.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState

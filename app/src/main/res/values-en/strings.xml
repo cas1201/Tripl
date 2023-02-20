@@ -72,5 +72,4 @@
     <string name="delete_itinerary_error">Error deleting the itinerary</string>
     <string name="get_itinerary_error">Error loading saved itineraries</string>
     <string name="itinerary_already_exists">Itinerary already exists, error saving it</string>
-    <string name="error_rendering_pdf">Error rendering user manual PDF</string>
 </resources>

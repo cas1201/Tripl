@@ -1,7 +1,5 @@
 package tfg.sal.tripl.theme
 
-import android.content.Context
-import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
@@ -10,10 +8,8 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.core.content.ContextCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import tfg.sal.tripl.appcontent.profile.profileoptions.settings.ui.SettingsViewModel
-import java.util.*
 
 private val DarkColorPalette = darkColors(
     primary = PrimaryColorNight,

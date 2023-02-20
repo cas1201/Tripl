@@ -1,6 +1,5 @@
 package tfg.sal.tripl.appcontent.home.data.network.countries
 
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import tfg.sal.tripl.appcontent.home.data.countries.Countries

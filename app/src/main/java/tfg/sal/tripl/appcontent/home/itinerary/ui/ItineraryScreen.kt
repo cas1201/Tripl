@@ -29,7 +29,6 @@ import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.data.network.response.POIResponse
 import tfg.sal.tripl.appcontent.home.itinerary.data.POITypes
 import tfg.sal.tripl.appcontent.home.itinerary.data.TriplLatLng
-import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.TriplTextField
 import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.Divisor

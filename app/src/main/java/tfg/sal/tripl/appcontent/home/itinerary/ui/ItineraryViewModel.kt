@@ -10,16 +10,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.maps.android.compose.CameraPositionState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import okhttp3.internal.wait
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.data.countries.Coordinates
 import tfg.sal.tripl.appcontent.home.data.network.response.POIResponse
@@ -27,14 +24,9 @@ import tfg.sal.tripl.appcontent.home.data.poi.PointsOfInterest
 import tfg.sal.tripl.appcontent.home.domain.POIUseCase
 import tfg.sal.tripl.appcontent.home.itinerary.data.POITypes
 import tfg.sal.tripl.appcontent.home.itinerary.data.TriplLatLng
-import tfg.sal.tripl.appcontent.home.ui.HomeViewModel
-import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.trip.ui.TripViewModel
 import tfg.sal.tripl.core.Routes
-import java.util.*
-import java.util.logging.Handler
 import javax.inject.Inject
-import kotlin.concurrent.schedule
 import kotlin.math.pow
 import kotlin.math.sqrt
 

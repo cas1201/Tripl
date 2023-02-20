@@ -1,7 +1,6 @@
 package tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.ui
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon

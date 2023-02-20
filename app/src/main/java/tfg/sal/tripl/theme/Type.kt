@@ -1,7 +1,6 @@
 package tfg.sal.tripl.theme
 
 import androidx.compose.material.Typography
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
