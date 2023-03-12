@@ -10,7 +10,7 @@ data class SavedItinerary(
     val cameraPosition: List<Double>?,
     val countryName: String?,
     val countryCity: String?,
-    val countryFlag: String
+    val countryFlag: String?
 ) {
     constructor() : this(
         siId = null,

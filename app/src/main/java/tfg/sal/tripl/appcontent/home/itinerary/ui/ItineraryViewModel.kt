@@ -40,6 +40,9 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     private val _destinationCity = MutableLiveData<String>()
     private val destinationCity: LiveData<String> = _destinationCity
 
+    private val _destinationFlag = MutableLiveData<String>()
+    private val destinationFlag: LiveData<String> = _destinationFlag
+
     private val _countryFlags = MutableLiveData<List<Map<String, String>>>()
     private val countryFlags: LiveData<List<Map<String, String>>> = _countryFlags
 
@@ -105,6 +108,12 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         navigationController.navigate(Routes.HomeScreen.route) {
             popUpTo(Routes.HomeScreen.route) { inclusive = true }
         }
+    }
+
+    fun setDestinationValues(country: String?, city: String?, countryFlag: String?) {
+        _destinationCountry.value = country
+        _destinationCity.value = city
+        _destinationFlag.value = countryFlag
     }
 
     fun errorRetrievingDestination(context: Context, navigationController: NavHostController) {
@@ -421,10 +430,9 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         tripViewModel: TripViewModel,
         navigationController: NavHostController
     ) {
-        var destinationFlag = ""
         countryFlags.value?.forEach {
             if (it[destinationCountry.value] != null) {
-                destinationFlag = it[destinationCountry.value].toString()
+                _destinationFlag.value = it[destinationCountry.value].toString()
             }
         }
         tripViewModel.saveItinerary(
@@ -434,7 +442,7 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
             filteredPoisCameraPosition.value,
             destinationCountry.value,
             destinationCity.value,
-            destinationFlag
+            destinationFlag.value
         )
         navigationController.navigate(Routes.TripScreen.route) {
             popUpTo(Routes.TripScreen.route) { inclusive = true }

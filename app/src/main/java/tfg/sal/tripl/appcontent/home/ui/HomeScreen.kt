@@ -2,6 +2,7 @@ package tfg.sal.tripl.appcontent.home.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.widget.Space
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -45,6 +46,7 @@ import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.TriplTextField
 import tfg.sal.tripl.appcontent.login.ui.headerText
 import tfg.sal.tripl.core.Routes
+import tfg.sal.tripl.theme.PrimaryTextColor
 import java.util.*
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -93,6 +95,10 @@ fun HomeScreen(
         },
         content = {
             Column {
+                Text(
+                    text = stringResource(id = R.string.start_searching),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
                 HomeContentSearch(
                     modifier = Modifier.padding(16.dp),
                     countries = countries,
@@ -102,6 +108,10 @@ fun HomeScreen(
                     viewModel = viewModel,
                     itineraryViewModel = itineraryViewModel,
                     navigationController = navigationController
+                )
+                Text(
+                    text = stringResource(id = R.string.recommended_search),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                 )
                 HomeContentRecommendedDestinations(
                     modifier = Modifier.padding(16.dp),

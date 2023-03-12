@@ -90,11 +90,18 @@ fun LoginBody(
     val loginEnable: Boolean by viewModel.logInEnable.observeAsState(initial = false)
     val signInPressed: Boolean by viewModel.signInPressed.observeAsState(initial = false)
 
+    val context = LocalContext.current
+
     Column(modifier = modifier.padding(top = 60.dp)) {
         appLogo(size = 125, modifier = Modifier.align(Alignment.CenterHorizontally))
         headerText(
             size = 30,
             text = stringResource(id = R.string.app_name),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        ComplementaryText(
+            size = 20,
+            text = stringResource(id = R.string.login_complementary_text),
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.padding(32.dp))
@@ -120,9 +127,13 @@ fun LoginBody(
         Spacer(modifier = Modifier.padding(16.dp))
         TriplButton(
             text = stringResource(id = R.string.login),
-            buttonEnable = loginEnable
+            buttonEnable = true
         ) {
-            fireBaseViewModel?.login(email, password)
+            if (loginEnable) {
+                fireBaseViewModel?.login(email, password)
+            } else {
+                viewModel.showToast(context, R.string.login_error)
+            }
         }
         /*Spacer(modifier = Modifier.padding(12.dp))
         LoginDivider()
@@ -133,7 +144,7 @@ fun LoginBody(
             when (it) {
                 is FireBaseAuthResource.Error -> {
                     if (signInPressed) {
-                        viewModel.showToast(LocalContext.current, R.string.login_error)
+                        viewModel.showToast(context, R.string.login_error)
                     }
                 }
                 FireBaseAuthResource.Loading -> {
@@ -190,6 +201,18 @@ fun headerText(size: Int, text: String, modifier: Modifier) {
         modifier = modifier,
         fontSize = size.sp,
         fontWeight = FontWeight.Bold,
+        color = PrimaryTextColor
+    )
+}
+
+@Composable
+fun ComplementaryText(size: Int, text: String, modifier: Modifier) {
+    Text(
+        text = text,
+        modifier = modifier,
+        style = MaterialTheme.typography.overline,
+        fontSize = size.sp,
+        //fontWeight = FontWeight.Bold,
         color = PrimaryTextColor
     )
 }

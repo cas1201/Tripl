@@ -1,6 +1,7 @@
 package tfg.sal.tripl.appcontent.trip.ui
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -60,7 +61,7 @@ class TripViewModel @Inject constructor(
         cameraPosition: List<Double>?,
         countryName: String?,
         countryCity: String?,
-        countryFlag: String
+        countryFlag: String?
     ) {
         val si = SavedItinerary(
             UUID.randomUUID().toString(),
@@ -124,6 +125,11 @@ class TripViewModel @Inject constructor(
         navigationController: NavHostController
     ) {
         viewModelScope.launch {
+            itineraryViewModel.setDestinationValues(
+                savedItinerary.countryName,
+                savedItinerary.countryCity,
+                savedItinerary.countryFlag
+            )
             val coordinates = coordinatesUseCase(
                 savedItinerary.countryCity!!,
                 savedItinerary.countryName!!

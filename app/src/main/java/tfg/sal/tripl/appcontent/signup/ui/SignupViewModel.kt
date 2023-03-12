@@ -1,7 +1,9 @@
 package tfg.sal.tripl.appcontent.signup.ui
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,11 +25,20 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
     private val _email = MutableLiveData<String>()
     val email: LiveData<String> = _email
 
+    private val _validEmail = MutableLiveData<Boolean>()
+    val validEmail: LiveData<Boolean> = _validEmail
+
     private val _password = MutableLiveData<String>()
     val password: LiveData<String> = _password
 
     private val _passwordRepeat = MutableLiveData<String>()
     val passwordRepeat: LiveData<String> = _passwordRepeat
+
+    private val _passwordLength = MutableLiveData<Boolean>()
+    val passwordLength: LiveData<Boolean> = _passwordLength
+
+    private val _passwordsMatch = MutableLiveData<Boolean>()
+    val passwordsMatch: LiveData<Boolean> = _passwordsMatch
 
     private val _passwordVisible = MutableLiveData<Boolean>()
     val passwordVisible: LiveData<Boolean> = _passwordVisible
@@ -48,6 +59,8 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
 
     fun onBackPressed(navigationController: NavHostController) {
         clearTextFields()
+        _passwordLength.value = false
+        _passwordsMatch.value = false
         navigationController.navigate(Routes.LoginScreen.route) {
             popUpTo(Routes.LoginScreen.route) { inclusive = true }
         }
@@ -73,10 +86,16 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
         _email.value = email
         _password.value = password
         _passwordRepeat.value = passwordRepeat
-        _signupEnable.value = isValidEmail(email) &&
-                isValidPassword(password) &&
-                passwordMatch(password, passwordRepeat)
+        val valuesFilled = checkValues()
+        val validEmail = isValidEmail(email)
+        val validPassword = isValidPassword(password)
+        val matchingPasswords = passwordMatch(password, passwordRepeat)
+        _signupEnable.value = valuesFilled && validEmail && validPassword && matchingPasswords
     }
+
+    fun checkValues(): Boolean =
+        !name.value.isNullOrBlank() && !surname.value.isNullOrBlank() && !email.value.isNullOrBlank()
+                && !password.value.isNullOrBlank()
 
     private fun isValidEmail(email: String): Boolean {
         var isValid = false
@@ -86,20 +105,27 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
         if (matcher.matches()) {
             isValid = true
         }
+        _validEmail.value = isValid
         return isValid
     }
 
-    private fun isValidPassword(password: String): Boolean =
-        password.length >= 8 &&
+    private fun isValidPassword(password: String): Boolean {
+        _passwordLength.value = password.length >= 8
+        return password.length >= 8 /*&&
                 password.contains("[A-Z]".toRegex()) &&
                 password.contains("[a-z]".toRegex()) &&
-                password.contains("[0-9]".toRegex())
+                password.contains("[0-9]".toRegex())*/
+    }
 
-    private fun passwordMatch(password: String, passwordRepeat: String): Boolean =
-        password == passwordRepeat
+    private fun passwordMatch(password: String, passwordRepeat: String): Boolean {
+        _passwordsMatch.value = password == passwordRepeat
+        return password == passwordRepeat
+    }
 
     fun onSignUpSelected(navigationController: NavHostController) {
         clearTextFields()
+        _passwordLength.value = false
+        _passwordsMatch.value = false
         _signUpPressed.value = true
         navigationController.navigate(Routes.LoginScreen.route) {
             popUpTo(Routes.LoginScreen.route) { inclusive = true }

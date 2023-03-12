@@ -56,10 +56,10 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun isValidPassword(password: String): Boolean =
-        password.length >= 8 &&
+        password.length >= 8 /*&&
                 password.contains("[A-Z]".toRegex()) &&
                 password.contains("[a-z]".toRegex()) &&
-                password.contains("[0-9]".toRegex())
+                password.contains("[0-9]".toRegex())*/
 
     fun onLoginSelected(navigationController: NavHostController) {
         clearTextFields()

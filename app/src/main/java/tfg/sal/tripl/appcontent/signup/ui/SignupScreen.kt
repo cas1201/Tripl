@@ -73,12 +73,17 @@ fun SignUpBody(
     val name: String by viewModel.name.observeAsState(initial = "")
     val surname: String by viewModel.surname.observeAsState(initial = "")
     val email: String by viewModel.email.observeAsState(initial = "")
+    val validEmail: Boolean by viewModel.validEmail.observeAsState(initial = false)
     val password: String by viewModel.password.observeAsState(initial = "")
+    val passwordLength: Boolean by viewModel.passwordLength.observeAsState(initial = false)
+    val passwordsMatch: Boolean by viewModel.passwordsMatch.observeAsState(initial = false)
     val passwordRepeat: String by viewModel.passwordRepeat.observeAsState(initial = "")
     val passwordVisible: Boolean by viewModel.passwordVisible.observeAsState(initial = false)
     val passwordRepeatVisible: Boolean by viewModel.passwordRepeatVisible.observeAsState(initial = false)
     val signUpEnable: Boolean by viewModel.signupEnable.observeAsState(initial = false)
     val signUpPressed: Boolean by viewModel.signUpPressed.observeAsState(initial = false)
+
+    val context = LocalContext.current
 
     Column(modifier = modifier) {
         appLogo(size = 80, modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -178,15 +183,33 @@ fun SignUpBody(
             Spacer(modifier = Modifier.padding(16.dp))
             TriplButton(
                 text = stringResource(id = R.string.signup),
-                buttonEnable = signUpEnable
-            ) { fireBaseViewModel?.signup("$name $surname", email, password) }
+                buttonEnable = true
+            ) {
+                if (signUpEnable) {
+                    fireBaseViewModel?.signup("$name $surname", email, password)
+                } else {
+                    if (viewModel.checkValues()) {
+                        if (!passwordLength) {
+                            viewModel.showToast(context, R.string.password_length)
+                        } else {
+                            if (!passwordsMatch) {
+                                viewModel.showToast(context, R.string.paswords_matching)
+                            } else {
+                                if (!validEmail) {
+                                    viewModel.showToast(context, R.string.invalid_email)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         signupFlow?.value?.let {
             when (it) {
                 is FireBaseAuthResource.Error -> {
                     if (signUpPressed) {
-                        viewModel.showToast(LocalContext.current, R.string.signup_error)
+                        viewModel.showToast(context, R.string.signup_error)
                     }
                 }
                 FireBaseAuthResource.Loading -> {
