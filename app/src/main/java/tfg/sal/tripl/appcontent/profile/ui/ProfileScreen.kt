@@ -1,16 +1,20 @@
 package tfg.sal.tripl.appcontent.profile.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -18,90 +22,127 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.FirebaseUser
 import tfg.sal.tripl.R
 import tfg.sal.tripl.appcontent.home.ui.BottomNav
 import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
+import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.headerText
 import tfg.sal.tripl.appcontent.profile.domain.GridModal
-import tfg.sal.tripl.appcontent.profile.profileoptions.settings.ui.SettingsViewModel
-import tfg.sal.tripl.theme.PrimaryColorDay
-import tfg.sal.tripl.theme.PrimaryColorNight
+import tfg.sal.tripl.appcontent.trip.data.SavedItinerary
+import tfg.sal.tripl.appcontent.trip.ui.DeleteItineraryAlertDialog
+import tfg.sal.tripl.appcontent.trip.ui.TripViewModel
 import tfg.sal.tripl.theme.SecondaryColor
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,
-    settingsViewModel: SettingsViewModel,
-    fireBaseViewModel: FireBaseViewModel?,
+    fireBaseViewModel: FireBaseViewModel,
     navigationController: NavHostController
 ) {
-    val user = fireBaseViewModel?.currentUser
+    val showAlertDialog: Boolean by viewModel.showAlertDialog.observeAsState(initial = false)
     val profileList = viewModel.profileList()
 
     val scaffoldState = rememberScaffoldState()
     val currentDestination = navigationController.currentDestination
-    Scaffold(
-        modifier = Modifier.padding(16.dp),
-        scaffoldState = scaffoldState,
-        topBar = {
-            ProfileHeader(
-                modifier = Modifier.padding(start = 16.dp),
-                viewModel,
-                settingsViewModel,
-                user
-            )
-        },
-        content = {
-            ProfileContent(
-                modifier = Modifier.padding(16.dp),
-                profileList = profileList,
-                viewModel = viewModel,
-                navigationController = navigationController
-            )
-        },
-        bottomBar = {
-            BottomNav(
-                currentDestination
-            ) {
-                viewModel.onIndexChange(
-                    bottomIndex = it,
+    ModalDrawer(
+        drawerContent = {
+            if (showAlertDialog) {
+                LogOutAlertDialog(
+                    showAlertDialog = showAlertDialog,
+                    viewModel = viewModel,
+                    fireBaseViewModel = fireBaseViewModel,
                     navigationController = navigationController
                 )
             }
+        },
+        content = {
+            Scaffold(
+                modifier = Modifier.padding(16.dp),
+                scaffoldState = scaffoldState,
+                topBar = {
+                    ProfileHeader(
+                        modifier = Modifier.padding(start = 16.dp),
+                        viewModel,
+                        showAlertDialog
+                    )
+                },
+                content = {
+                    ProfileContent(
+                        modifier = Modifier.padding(16.dp),
+                        profileList = profileList,
+                        viewModel = viewModel,
+                        navigationController = navigationController
+                    )
+                },
+                bottomBar = {
+                    BottomNav(
+                        currentDestination
+                    ) {
+                        viewModel.onIndexChange(
+                            bottomIndex = it,
+                            navigationController = navigationController
+                        )
+                    }
+                }
+            )
         }
     )
 }
 
 @Composable
-fun ProfileHeader(
-    modifier: Modifier,
-    viewModel: ProfileViewModel,
-    settingsViewModel: SettingsViewModel,
-    user: FirebaseUser?
-) {
-    val userName = viewModel.getUserName(user?.displayName ?: "")
-    val color =
-        if (settingsViewModel.darkMode.value == "enabled") PrimaryColorNight else PrimaryColorDay
-
+fun ProfileHeader(modifier: Modifier, viewModel: ProfileViewModel, showAlertDialog: Boolean) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         headerText(
             size = 30,
             text = stringResource(id = R.string.profile),
             modifier = modifier
         )
-        Box(modifier = modifier, contentAlignment = Alignment.Center) {
-            Canvas(Modifier.size(95.dp)) {
-                drawCircle(SolidColor(SecondaryColor))
-            }
-            Text(
-                text = userName.uppercase(),
-                fontSize = 35.sp,
-                color = color
-            )
-        }
+        Icon(
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 16.dp)
+                .clickable { viewModel.logOutClicked(!showAlertDialog) },
+            imageVector = Icons.Default.PowerSettingsNew,
+            contentDescription = stringResource(id = R.string.log_out),
+            tint = SecondaryColor
+        )
     }
+}
+
+@Composable
+fun LogOutAlertDialog(
+    showAlertDialog: Boolean,
+    viewModel: ProfileViewModel,
+    fireBaseViewModel: FireBaseViewModel,
+    navigationController: NavHostController
+) {
+    AlertDialog(
+        onDismissRequest = { viewModel.logOutClicked(!showAlertDialog) },
+        title = {
+            Text(text = stringResource(id = R.string.log_out_dialog))
+        },
+        text = {
+            Text(text = stringResource(id = R.string.log_out_dialog_text))
+        },
+        buttons = {
+            Row(Modifier.padding(25.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                TriplButton(
+                    text = stringResource(id = R.string.delete_itinerary_dialog_yes),
+                    buttonEnable = true,
+                    alertDialog = true
+                ) {
+                    viewModel.logOutClicked(!showAlertDialog)
+                    viewModel.logout(fireBaseViewModel, navigationController)
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                TriplButton(
+                    text = stringResource(id = R.string.delete_itinerary_dialog_no),
+                    buttonEnable = true,
+                    alertDialog = true
+                ) { viewModel.logOutClicked(!showAlertDialog) }
+            }
+        }
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)

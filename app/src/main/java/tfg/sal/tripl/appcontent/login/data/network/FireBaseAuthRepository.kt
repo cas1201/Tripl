@@ -11,6 +11,6 @@ interface FireBaseAuthRepository {
         password: String
     ): FireBaseAuthResource<FirebaseUser>
 
-    suspend fun recoverPassword(email: String): FireBaseAuthResource<Void?>
+    suspend fun changePassword(email: String): FireBaseAuthResource<Void?>
     fun logout()
 }

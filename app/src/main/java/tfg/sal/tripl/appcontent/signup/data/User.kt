@@ -1,4 +1,4 @@
-package tfg.sal.tripl.appcontent.login.data
+package tfg.sal.tripl.appcontent.signup.data
 
 data class User(
     val userUid: String? = "",

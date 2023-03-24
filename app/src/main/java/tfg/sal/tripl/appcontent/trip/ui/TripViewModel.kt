@@ -30,7 +30,7 @@ class TripViewModel @Inject constructor(
 ) :
     ViewModel() {
 
-    private val savedItinerariesCollectionName = "savedItineraries@${firebase.currentUser!!.uid}"
+    private val userUid = firebase.currentUser!!.uid
 
     private val _savedItineraries = MutableLiveData<List<SavedItinerary>>()
     val savedItineraries: LiveData<List<SavedItinerary>> = _savedItineraries
@@ -80,7 +80,9 @@ class TripViewModel @Inject constructor(
     }
 
     private fun firestoreSaveItinerary(context: Context, si: SavedItinerary) {
-        firestore.collection(savedItinerariesCollectionName)
+        firestore.collection(userUid)
+            .document("savedItineraries")
+            .collection("itineraryData")
             .document("${si.countryName!!}@${si.siId!!}")
             .set(si)
             .addOnFailureListener {
@@ -89,7 +91,9 @@ class TripViewModel @Inject constructor(
     }
 
     fun firestoreGetItinerary(context: Context) {
-        firestore.collection(savedItinerariesCollectionName)
+        firestore.collection(userUid)
+            .document("savedItineraries")
+            .collection("itineraryData")
             .get()
             .addOnSuccessListener {
                 _savedItineraries.value = it.toObjects(SavedItinerary::class.java).asReversed()
@@ -99,7 +103,9 @@ class TripViewModel @Inject constructor(
     }
 
     fun deleteItinerary(context: Context, itinerary: SavedItinerary) {
-        firestore.collection(savedItinerariesCollectionName)
+        firestore.collection(userUid)
+            .document("savedItineraries")
+            .collection("itineraryData")
             .document("${itinerary.countryName!!}@${itinerary.siId!!}")
             .delete()
             .addOnSuccessListener {

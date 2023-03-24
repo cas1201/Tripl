@@ -42,7 +42,7 @@ class FireBaseAuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun recoverPassword(email: String): FireBaseAuthResource<Void?> {
+    override suspend fun changePassword(email: String): FireBaseAuthResource<Void?> {
         return try {
             val result = auth.sendPasswordResetEmail(email).await()
             FireBaseAuthResource.Success(result)

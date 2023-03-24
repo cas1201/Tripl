@@ -79,4 +79,10 @@
     <string name="login_complementary_text">Find your perfect itinerary!</string>
     <string name="start_searching">Let\'s begin the search…</string>
     <string name="recommended_search">Or explore these countries\' capitals!</string>
+    <string name="save_user_error">Error saving user data</string>
+    <string name="get_user_error">Error retrieving user data</string>
+    <string name="log_out_dialog">Log out</string>
+    <string name="log_out_dialog_text">Are you sure you want to log out?</string>
+    <string name="change_password">Change password</string>
+    <string name="change_password_email_sent">Change password email sent! Check your inbox and the \"spam\" folder.</string>
 </resources>

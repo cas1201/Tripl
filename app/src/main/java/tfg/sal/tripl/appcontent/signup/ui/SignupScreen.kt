@@ -223,7 +223,7 @@ fun SignUpBody(
                 }
                 is FireBaseAuthResource.Success -> {
                     LaunchedEffect(Unit) {
-                        viewModel.onSignUpSelected(navigationController)
+                        viewModel.onSignUpSelected(context, navigationController)
                     }
                 }
             }

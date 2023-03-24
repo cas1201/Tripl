@@ -7,14 +7,24 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import tfg.sal.tripl.R
+import tfg.sal.tripl.appcontent.signup.data.User
+import tfg.sal.tripl.appcontent.trip.data.SavedItinerary
 import tfg.sal.tripl.core.Routes
 import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor() : ViewModel() {
+class SignUpViewModel @Inject constructor(
+    private val firestore: FirebaseFirestore,
+    private val firebase: FirebaseAuth
+) : ViewModel() {
 
     private val _name = MutableLiveData<String>()
     val name: LiveData<String> = _name
@@ -122,14 +132,34 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
         return password == passwordRepeat
     }
 
-    fun onSignUpSelected(navigationController: NavHostController) {
-        clearTextFields()
+    fun onSignUpSelected(context: Context, navigationController: NavHostController) {
         _passwordLength.value = false
         _passwordsMatch.value = false
         _signUpPressed.value = true
-        navigationController.navigate(Routes.LoginScreen.route) {
-            popUpTo(Routes.LoginScreen.route) { inclusive = true }
+        viewModelScope.launch {
+            firestoreSaveUser(
+                context,
+                User(
+                    firebase.currentUser!!.uid,
+                    name.value,
+                    surname.value,
+                    email.value
+                )
+            )
+            navigationController.navigate(Routes.LoginScreen.route) {
+                clearTextFields()
+                popUpTo(Routes.LoginScreen.route) { inclusive = true }
+            }
         }
+    }
+
+    private fun firestoreSaveUser(context: Context, user: User) {
+        firestore.collection(firebase.currentUser!!.uid)
+            .document("userData")
+            .set(user)
+            .addOnFailureListener {
+                showToast(context, R.string.save_user_error)
+            }
     }
 
     private fun clearTextFields() {

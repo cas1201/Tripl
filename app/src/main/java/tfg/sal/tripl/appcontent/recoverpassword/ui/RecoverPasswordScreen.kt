@@ -86,7 +86,7 @@ fun PasswordForgetBody(
             TriplButton(
                 text = stringResource(id = R.string.recover_password),
                 buttonEnable = recoverPasswordEnable
-            ) { fireBaseViewModel?.recoverPassword(email) }
+            ) { fireBaseViewModel?.changePassword(email) }
         }
 
         recoverPasswordFlow?.value?.let {

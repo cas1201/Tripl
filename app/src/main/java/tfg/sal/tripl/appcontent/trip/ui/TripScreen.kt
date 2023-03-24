@@ -1,6 +1,7 @@
 package tfg.sal.tripl.appcontent.trip.ui
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState

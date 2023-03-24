@@ -1,16 +1,21 @@
 package tfg.sal.tripl
 
-import org.junit.Assert.assertEquals
+import com.google.firebase.auth.FirebaseAuth
 import org.junit.Test
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
+// Modify the following line to use hilt injections
 class ExampleUnitTest {
+    // Create a test to check the firebase authentication
     @Test
-    fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+    fun firebaseAuthTest() {
+        val auth = FirebaseAuth.getInstance()
+        auth.signInWithEmailAndPassword("", "")
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    println("Authentication success")
+                } else {
+                    println("Authentication failed")
+                }
+            }
     }
 }

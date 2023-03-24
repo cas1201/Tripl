@@ -19,10 +19,8 @@ import tfg.sal.tripl.appcontent.home.ui.HomeViewModel
 import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.login.ui.LoginScreen
 import tfg.sal.tripl.appcontent.login.ui.LoginViewModel
-import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.logininfo.ui.LoginInfoViewModel
-import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.detailsoptions.ui.LoginInfoScreen
-import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.ProfileDetailsScreen
-import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.ProfileDetailsViewModel
+import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.UserInfoScreen
+import tfg.sal.tripl.appcontent.profile.profileoptions.profiledetails.ui.UserInfoViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.settings.ui.SettingsScreen
 import tfg.sal.tripl.appcontent.profile.profileoptions.settings.ui.SettingsViewModel
 import tfg.sal.tripl.appcontent.profile.profileoptions.support.ui.SupportScreen
@@ -54,8 +52,7 @@ class MainActivity : ComponentActivity() {
     private val itineraryViewModel: ItineraryViewModel by viewModels()
     private val tripViewModel: TripViewModel by viewModels()
     private val profileViewModel: ProfileViewModel by viewModels()
-    private val profileDetailsViewModel: ProfileDetailsViewModel by viewModels()
-    private val loginInfoViewModel: LoginInfoViewModel by viewModels()
+    private val userInfoViewModel: UserInfoViewModel by viewModels()
     private val userManualViewModel: UserManualViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
     private val supportViewModel: SupportViewModel by viewModels()
@@ -127,23 +124,15 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.ProfileScreen.route) {
                             ProfileScreen(
                                 profileViewModel,
-                                settingsViewModel,
                                 fireBaseViewModel,
                                 navigationController
                             )
                         }
-                        composable(Routes.ProfileDetailsScreen.route) {
-                            ProfileDetailsScreen(
-                                profileDetailsViewModel,
+                        composable(Routes.UserInfoScreen.route) {
+                            UserInfoScreen(
+                                userInfoViewModel,
                                 fireBaseViewModel,
-                                navigationController
-                            )
-                        }
-                        composable(Routes.LoginInfoScreen.route) {
-                            LoginInfoScreen(
-                                loginInfoViewModel,
                                 settingsViewModel,
-                                fireBaseViewModel,
                                 navigationController
                             )
                         }
