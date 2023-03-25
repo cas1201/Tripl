@@ -28,9 +28,6 @@ import tfg.sal.tripl.appcontent.login.domain.FireBaseViewModel
 import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.headerText
 import tfg.sal.tripl.appcontent.profile.domain.GridModal
-import tfg.sal.tripl.appcontent.trip.data.SavedItinerary
-import tfg.sal.tripl.appcontent.trip.ui.DeleteItineraryAlertDialog
-import tfg.sal.tripl.appcontent.trip.ui.TripViewModel
 import tfg.sal.tripl.theme.SecondaryColor
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -45,47 +42,64 @@ fun ProfileScreen(
 
     val scaffoldState = rememberScaffoldState()
     val currentDestination = navigationController.currentDestination
-    ModalDrawer(
-        drawerContent = {
-            if (showAlertDialog) {
-                LogOutAlertDialog(
-                    showAlertDialog = showAlertDialog,
-                    viewModel = viewModel,
-                    fireBaseViewModel = fireBaseViewModel,
+
+    if (showAlertDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.logOutClicked(!showAlertDialog) },
+            title = {
+                Text(text = stringResource(id = R.string.log_out_dialog))
+            },
+            text = {
+                Text(text = stringResource(id = R.string.log_out_dialog_text))
+            },
+            buttons = {
+                Row(Modifier.padding(25.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    TriplButton(
+                        text = stringResource(id = R.string.alert_dialog_yes),
+                        buttonEnable = true,
+                        alertDialog = true
+                    ) {
+                        viewModel.logOutClicked(!showAlertDialog)
+                        viewModel.logout(fireBaseViewModel, navigationController)
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    TriplButton(
+                        text = stringResource(id = R.string.alert_dialog_no),
+                        buttonEnable = true,
+                        alertDialog = true
+                    ) { viewModel.logOutClicked(!showAlertDialog) }
+                }
+            }
+        )
+    }
+
+    Scaffold(
+        modifier = Modifier.padding(16.dp),
+        scaffoldState = scaffoldState,
+        topBar = {
+            ProfileHeader(
+                modifier = Modifier.padding(start = 16.dp),
+                viewModel,
+                showAlertDialog
+            )
+        },
+        content = {
+            ProfileContent(
+                modifier = Modifier.padding(16.dp),
+                profileList = profileList,
+                viewModel = viewModel,
+                navigationController = navigationController
+            )
+        },
+        bottomBar = {
+            BottomNav(
+                currentDestination
+            ) {
+                viewModel.onIndexChange(
+                    bottomIndex = it,
                     navigationController = navigationController
                 )
             }
-        },
-        content = {
-            Scaffold(
-                modifier = Modifier.padding(16.dp),
-                scaffoldState = scaffoldState,
-                topBar = {
-                    ProfileHeader(
-                        modifier = Modifier.padding(start = 16.dp),
-                        viewModel,
-                        showAlertDialog
-                    )
-                },
-                content = {
-                    ProfileContent(
-                        modifier = Modifier.padding(16.dp),
-                        profileList = profileList,
-                        viewModel = viewModel,
-                        navigationController = navigationController
-                    )
-                },
-                bottomBar = {
-                    BottomNav(
-                        currentDestination
-                    ) {
-                        viewModel.onIndexChange(
-                            bottomIndex = it,
-                            navigationController = navigationController
-                        )
-                    }
-                }
-            )
         }
     )
 }
@@ -107,42 +121,6 @@ fun ProfileHeader(modifier: Modifier, viewModel: ProfileViewModel, showAlertDial
             tint = SecondaryColor
         )
     }
-}
-
-@Composable
-fun LogOutAlertDialog(
-    showAlertDialog: Boolean,
-    viewModel: ProfileViewModel,
-    fireBaseViewModel: FireBaseViewModel,
-    navigationController: NavHostController
-) {
-    AlertDialog(
-        onDismissRequest = { viewModel.logOutClicked(!showAlertDialog) },
-        title = {
-            Text(text = stringResource(id = R.string.log_out_dialog))
-        },
-        text = {
-            Text(text = stringResource(id = R.string.log_out_dialog_text))
-        },
-        buttons = {
-            Row(Modifier.padding(25.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                TriplButton(
-                    text = stringResource(id = R.string.delete_itinerary_dialog_yes),
-                    buttonEnable = true,
-                    alertDialog = true
-                ) {
-                    viewModel.logOutClicked(!showAlertDialog)
-                    viewModel.logout(fireBaseViewModel, navigationController)
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                TriplButton(
-                    text = stringResource(id = R.string.delete_itinerary_dialog_no),
-                    buttonEnable = true,
-                    alertDialog = true
-                ) { viewModel.logOutClicked(!showAlertDialog) }
-            }
-        }
-    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)

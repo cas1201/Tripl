@@ -77,8 +77,8 @@
     <string name="delete_itinerary">Borrar itinerario</string>
     <string name="delete_itinerary_dialog_text">¿Seguro que quieres borrar este itinerario?</string>
     <string name="delete_itinerary_dialog">Borrar itinerario</string>
-    <string name="delete_itinerary_dialog_yes">Sí</string>
-    <string name="delete_itinerary_dialog_no">No</string>
+    <string name="alert_dialog_yes">Sí</string>
+    <string name="alert_dialog_no">No</string>
     <string name="spanish">Español</string>
     <string name="english">Inglés</string>
     <string name="light_mode">Modo claro</string>

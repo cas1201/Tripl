@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -40,53 +41,72 @@ fun TripScreen(
     navigationController: NavHostController
 ) {
     viewModel.firestoreGetItinerary(LocalContext.current)
+    val context = LocalContext.current
 
     val showAlertDialog: Boolean by viewModel.showAlertDialog.observeAsState(initial = false)
     val cardSavedItinerary: SavedItinerary by viewModel.cardSavedItinerary.observeAsState(initial = SavedItinerary())
 
     val scaffoldState = rememberScaffoldState()
     val currentDestination = navigationController.currentDestination
-    ModalDrawer(
-        drawerContent = {
-            if (showAlertDialog) {
-                DeleteItineraryAlertDialog(
-                    si = cardSavedItinerary,
-                    showAlertDialog = showAlertDialog,
-                    viewModel = viewModel
-                )
+
+    if (showAlertDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.showAlertDialog(!showAlertDialog) },
+            title = {
+                Text(text = stringResource(id = R.string.delete_itinerary_dialog))
+            },
+            text = {
+                Text(text = stringResource(id = R.string.delete_itinerary_dialog_text))
+            },
+            buttons = {
+                Row(Modifier.padding(25.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    TriplButton(
+                        text = stringResource(id = R.string.alert_dialog_yes),
+                        buttonEnable = true,
+                        alertDialog = true
+                    ) {
+                        viewModel.deleteItinerary(context, cardSavedItinerary)
+                        viewModel.showAlertDialog(!showAlertDialog)
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    TriplButton(
+                        text = stringResource(id = R.string.alert_dialog_no),
+                        buttonEnable = true,
+                        alertDialog = true
+                    ) { viewModel.showAlertDialog(!showAlertDialog) }
+                }
             }
+        )
+    }
+
+    Scaffold(
+        modifier = Modifier.padding(16.dp),
+        scaffoldState = scaffoldState,
+        topBar = {
+            headerText(
+                size = 30,
+                text = stringResource(id = R.string.trip),
+                modifier = Modifier.padding(start = 16.dp)
+            )
         },
         content = {
-            Scaffold(
+            TripBody(
                 modifier = Modifier.padding(16.dp),
-                scaffoldState = scaffoldState,
-                topBar = {
-                    headerText(
-                        size = 30,
-                        text = stringResource(id = R.string.trip),
-                        modifier = Modifier.padding(start = 16.dp)
-                    )
-                },
-                content = {
-                    TripBody(
-                        modifier = Modifier.padding(16.dp),
-                        showAlertDialog = showAlertDialog,
-                        viewModel = viewModel,
-                        itineraryViewModel = itineraryViewModel,
-                        navigationController = navigationController
-                    )
-                },
-                bottomBar = {
-                    BottomNav(
-                        currentDestination
-                    ) {
-                        viewModel.onIndexChange(
-                            bottomIndex = it,
-                            navigationController = navigationController
-                        )
-                    }
-                }
+                showAlertDialog = showAlertDialog,
+                viewModel = viewModel,
+                itineraryViewModel = itineraryViewModel,
+                navigationController = navigationController
             )
+        },
+        bottomBar = {
+            BottomNav(
+                currentDestination
+            ) {
+                viewModel.onIndexChange(
+                    bottomIndex = it,
+                    navigationController = navigationController
+                )
+            }
         }
     )
 }
@@ -184,39 +204,6 @@ fun SavedItineraryCard(si: SavedItinerary, showAlertDialog: Boolean, viewModel: 
         )
     }
 }
-
-@Composable
-fun DeleteItineraryAlertDialog(si: SavedItinerary, showAlertDialog: Boolean, viewModel: TripViewModel) {
-    val context = LocalContext.current
-    AlertDialog(
-        onDismissRequest = { viewModel.showAlertDialog(!showAlertDialog) },
-        title = {
-            Text(text = stringResource(id = R.string.delete_itinerary_dialog))
-        },
-        text = {
-            Text(text = stringResource(id = R.string.delete_itinerary_dialog_text))
-        },
-        buttons = {
-            Row(Modifier.padding(25.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                TriplButton(
-                    text = stringResource(id = R.string.delete_itinerary_dialog_yes),
-                    buttonEnable = true,
-                    alertDialog = true
-                ) {
-                    viewModel.deleteItinerary(context, si)
-                    viewModel.showAlertDialog(!showAlertDialog)
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                TriplButton(
-                    text = stringResource(id = R.string.delete_itinerary_dialog_no),
-                    buttonEnable = true,
-                    alertDialog = true
-                ) { viewModel.showAlertDialog(!showAlertDialog) }
-            }
-        }
-    )
-}
-
 
 
 
