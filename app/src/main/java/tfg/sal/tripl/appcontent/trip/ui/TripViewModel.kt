@@ -47,7 +47,11 @@ class TripViewModel @Inject constructor(
 
     private fun showToast(context: Context, message: Int) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        //_signInPressed.value = false
+    }
+
+    fun refreshClicked(context: Context){
+        _savedItineraries.value = emptyList()
+        firestoreGetItinerary(context)
     }
 
     fun cardSavedItinerary(si: SavedItinerary) {

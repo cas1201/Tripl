@@ -88,4 +88,5 @@
     <string name="search_filters">Search filters</string>
     <string name="save_preferences">Save preferences</string>
     <string name="preferences_saved">Preferences saved!</string>
+    <string name="refresh_titineraries">Refresh itineraries</string>
 </resources>

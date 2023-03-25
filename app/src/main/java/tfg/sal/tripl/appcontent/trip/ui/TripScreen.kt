@@ -1,6 +1,7 @@
 package tfg.sal.tripl.appcontent.trip.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,6 +10,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.PowerSettingsNew
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,7 +34,9 @@ import tfg.sal.tripl.appcontent.home.itinerary.ui.ItineraryViewModel
 import tfg.sal.tripl.appcontent.home.ui.BottomNav
 import tfg.sal.tripl.appcontent.login.ui.TriplButton
 import tfg.sal.tripl.appcontent.login.ui.headerText
+import tfg.sal.tripl.appcontent.profile.ui.ProfileViewModel
 import tfg.sal.tripl.appcontent.trip.data.SavedItinerary
+import tfg.sal.tripl.theme.SecondaryColor
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -83,10 +88,10 @@ fun TripScreen(
         modifier = Modifier.padding(16.dp),
         scaffoldState = scaffoldState,
         topBar = {
-            headerText(
-                size = 30,
-                text = stringResource(id = R.string.trip),
-                modifier = Modifier.padding(start = 16.dp)
+            TripHeader(
+                modifier = Modifier.padding(start = 16.dp),
+                viewModel = viewModel,
+                context = context
             )
         },
         content = {
@@ -109,6 +114,25 @@ fun TripScreen(
             }
         }
     )
+}
+
+@Composable
+fun TripHeader(modifier: Modifier, viewModel: TripViewModel, context: Context) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        headerText(
+            size = 30,
+            text = stringResource(id = R.string.trip),
+            modifier = modifier
+        )
+        Icon(
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 16.dp)
+                .clickable { viewModel.refreshClicked(context) },
+            imageVector = Icons.Default.Refresh,
+            contentDescription = stringResource(id = R.string.refresh_titineraries),
+            tint = SecondaryColor
+        )
+    }
 }
 
 @Composable

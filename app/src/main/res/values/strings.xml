@@ -104,4 +104,5 @@
     <string name="search_filters">Filtros de búsqueda</string>
     <string name="save_preferences">Guardar preferencias</string>
     <string name="preferences_saved">¡Preferencias guardadas!</string>
+    <string name="refresh_titineraries">Actualizar itinerarios</string>
 </resources>
