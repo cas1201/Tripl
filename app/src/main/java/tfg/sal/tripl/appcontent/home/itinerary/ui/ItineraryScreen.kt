@@ -167,7 +167,7 @@ fun ItineraryHeader(
                             R.string.rating -> {
                                 Column(Modifier.fillMaxWidth()) {
                                     for (r in listOf(1, 2, 3)) {
-                                        ratingRadioButton(
+                                        RatingRadioButton(
                                             ratingLvl = r,
                                             poisRating = poisRating,
                                             viewModel = viewModel
@@ -176,7 +176,7 @@ fun ItineraryHeader(
                                 }
                             }
                             R.string.type -> {
-                                typeCheckBox(POITypes.values().toList(), viewModel)
+                                TypeCheckBox(POITypes.values().toList(), viewModel)
                             }
                             R.string.distance -> {
                                 Box {
@@ -217,7 +217,7 @@ fun ItineraryHeader(
 }
 
 @Composable
-fun ratingRadioButton(ratingLvl: Int, poisRating: Int, viewModel: ItineraryViewModel) {
+fun RatingRadioButton(ratingLvl: Int, poisRating: Int, viewModel: ItineraryViewModel) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         RadioButton(
             selected = poisRating == ratingLvl,
@@ -233,7 +233,7 @@ fun ratingRadioButton(ratingLvl: Int, poisRating: Int, viewModel: ItineraryViewM
 }
 
 @Composable
-fun typeCheckBox(types: List<POITypes>, viewModel: ItineraryViewModel) {
+fun TypeCheckBox(types: List<POITypes>, viewModel: ItineraryViewModel) {
     val arqStatus: Boolean by viewModel.arqStatus.observeAsState(initial = false)
     val cultStatus: Boolean by viewModel.cultStatus.observeAsState(initial = false)
     val industStatus: Boolean by viewModel.industStatus.observeAsState(initial = false)

@@ -1,5 +1,6 @@
 package tfg.sal.tripl.appcontent.home.itinerary.ui
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -11,6 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import androidx.preference.PreferenceManager
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.CameraPositionState
@@ -31,8 +33,14 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 @HiltViewModel
-class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase) : ViewModel() {
+class ItineraryViewModel @Inject constructor(
+    private val poiUseCase: POIUseCase,
+    app: Application
+) : ViewModel() {
     private val types = mutableMapOf<String, Boolean>()
+
+    private val sharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(app.applicationContext)
 
     private val _destinationCountry = MutableLiveData<String>()
     private val destinationCountry: LiveData<String> = _destinationCountry
@@ -62,7 +70,7 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
     val poisRating: LiveData<Int> = _poisRating
 
     private val _typeStatus = MutableLiveData<Map<String, Boolean>>()
-    val typeStatus: LiveData<Map<String, Boolean>> = _typeStatus
+    private val typeStatus: LiveData<Map<String, Boolean>> = _typeStatus
 
     private val _arqStatus = MutableLiveData<Boolean>()
     val arqStatus: LiveData<Boolean> = _arqStatus
@@ -110,6 +118,19 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         }
     }
 
+    fun setFilters() {
+        _poisAmount.value = sharedPreferences.getString("pois_amount", "5")
+        _poisRating.value = sharedPreferences.getInt("pois_rating", -1)
+        _arqStatus.value = sharedPreferences.getBoolean("arq_status", false)
+        _cultStatus.value = sharedPreferences.getBoolean("cult_status", false)
+        _industStatus.value = sharedPreferences.getBoolean("indust_status", false)
+        _natStatus.value = sharedPreferences.getBoolean("nat_status", false)
+        _relStatus.value = sharedPreferences.getBoolean("rel_status", false)
+        _otherStatus.value = sharedPreferences.getBoolean("other_status", false)
+        _poisDistance.value = sharedPreferences.getFloat("pois_distance", 12f)
+        _typeStatus.value = mapOf()
+    }
+
     fun setDestinationValues(country: String?, city: String?, countryFlag: String?) {
         _destinationCountry.value = country
         _destinationCity.value = city
@@ -134,21 +155,6 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
 
     fun onMenuPressed(expanded: Boolean) {
         _dropDownMenuExpanded.value = expanded
-    }
-
-    fun setFilters() {
-        if (poisAmount.value == null) {
-            _poisAmount.value = "5"
-        }
-        if (poisRating.value == null) {
-            _poisRating.value = -1
-        }
-        if (typeStatus.value == null) {
-            _typeStatus.value = mapOf()
-        }
-        if (poisDistance.value == null) {
-            _poisDistance.value = 25f
-        }
     }
 
     fun onAmountChange(amount: String) {
@@ -206,7 +212,6 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
 
     fun onDistanceChange(distance: Float) {
         _poisDistance.value = distance
-        Log.i("distancealert", "${poisDistance.value}")
     }
 
     fun getPOI(
@@ -290,7 +295,7 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         _poiMarkerCoordinates.value = getPoisMarkerCoordinates(filteredPois.value)
     }
 
-    fun orderPois(pois: List<POIResponse>): List<POIResponse> {
+    private fun orderPois(pois: List<POIResponse>): List<POIResponse> {
         var path = nearestNeighbor(pois)
         var bestPath = path
         var improvement = true
@@ -311,7 +316,7 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         return bestPath
     }
 
-    fun nearestNeighbor(pois: List<POIResponse>): List<POIResponse> {
+    private fun nearestNeighbor(pois: List<POIResponse>): List<POIResponse> {
         val n = pois.size
         val visited = BooleanArray(n) { false }
         val path = mutableListOf<POIResponse>()
@@ -351,7 +356,7 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         return path
     }
 
-    fun swap(path: List<POIResponse>, i: Int, k: Int): List<POIResponse> {
+    private fun swap(path: List<POIResponse>, i: Int, k: Int): List<POIResponse> {
         val newPath = mutableListOf<POIResponse>()
         for (j in 0 until i) {
             newPath.add(path[j])
@@ -365,16 +370,18 @@ class ItineraryViewModel @Inject constructor(private val poiUseCase: POIUseCase)
         return newPath
     }
 
-    fun totalDistance(path: List<POIResponse>): Double {
+    private fun totalDistance(path: List<POIResponse>): Double {
         var total = 0.0
         for (i in 0 until path.size - 1) {
-            total += euclideanDistance(path[i].location.latPoint, path[i].location.lonPoint,
-                path[i + 1].location.latPoint, path[i + 1].location.lonPoint)
+            total += euclideanDistance(
+                path[i].location.latPoint, path[i].location.lonPoint,
+                path[i + 1].location.latPoint, path[i + 1].location.lonPoint
+            )
         }
         return total
     }
 
-    fun euclideanDistance(x1: Double, y1: Double, x2: Double, y2: Double): Double {
+    private fun euclideanDistance(x1: Double, y1: Double, x2: Double, y2: Double): Double {
         return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
     }
 

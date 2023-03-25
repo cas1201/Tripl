@@ -84,7 +84,7 @@
     <string name="light_mode">Modo claro</string>
     <string name="dark_mode">Modo oscuro</string>
     <string name="language_choice">Elección de idioma</string>
-    <string name="mode_choice">Elección de modo</string>
+    <string name="mode_choice">Elección de tema</string>
     <string name="get_destination_error">Error al cargar el destino</string>
     <string name="save_itinerary_error">Error al guardar el itinerario</string>
     <string name="delete_itinerary_error">Error al borrar el itinerario</string>
@@ -101,4 +101,7 @@
     <string name="log_out_dialog_text">¿Estas seguro de que quieres cerrar la sesión?</string>
     <string name="change_password">Cambiar la contraseña</string>
     <string name="change_password_email_sent">¡Email de cambio de contraseña enviado! Revisa tu bandeja de entrada y la carpeta de spam.</string>
+    <string name="search_filters">Filtros de búsqueda</string>
+    <string name="save_preferences">Guardar preferencias</string>
+    <string name="preferences_saved">¡Preferencias guardadas!</string>
 </resources>

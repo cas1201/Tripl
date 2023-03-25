@@ -67,7 +67,7 @@
     <string name="light_mode">Light mode</string>
     <string name="dark_mode">Dark mode</string>
     <string name="language_choice">Language choice</string>
-    <string name="mode_choice">Mode choice</string>
+    <string name="mode_choice">Theme choice</string>
     <string name="get_destination_error">Error loading the destination</string>
     <string name="save_itinerary_error">Error saving the itinerary</string>
     <string name="delete_itinerary_error">Error deleting the itinerary</string>
@@ -85,4 +85,7 @@
     <string name="log_out_dialog_text">Are you sure you want to log out?</string>
     <string name="change_password">Change password</string>
     <string name="change_password_email_sent">Change password email sent! Check your inbox and the \"spam\" folder.</string>
+    <string name="search_filters">Search filters</string>
+    <string name="save_preferences">Save preferences</string>
+    <string name="preferences_saved">Preferences saved!</string>
 </resources>
