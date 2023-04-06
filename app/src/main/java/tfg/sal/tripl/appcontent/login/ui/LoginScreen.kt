@@ -143,9 +143,7 @@ fun LoginBody(
         loginFlow?.value?.let {
             when (it) {
                 is FireBaseAuthResource.Error -> {
-                    if (signInPressed) {
-                        viewModel.showToast(context, R.string.login_error)
-                    }
+                    viewModel.showToast(context, R.string.login_error)
                 }
                 FireBaseAuthResource.Loading -> {
                     Box(

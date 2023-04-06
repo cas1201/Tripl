@@ -62,8 +62,8 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                 password.contains("[0-9]".toRegex())*/
 
     fun onLoginSelected(navigationController: NavHostController) {
-        clearTextFields()
         _signInPressed.value = true
+        clearTextFields()
         navigationController.navigate(Routes.HomeScreen.route) {
             popUpTo(Routes.HomeScreen.route) { inclusive = true }
         }
