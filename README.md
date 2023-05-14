@@ -6,4 +6,4 @@ Para clonar el repositorio se deberá:
 En caso de querer instalar la aplicación en un dispositivo Android se deberá:
 
   •	Descargar el archivo tripl.apk del repositorio.
-  •	Instalar el archivo en el dispositivo Android, ignorando los posibles mensajes de avisos de archivo malicioso, ya que aparecen debido a que la aplicación no está     firmada por Google ni está disponible en la Play Store. 
+  •	Instalar el archivo en el dispositivo Android, ignorando los posibles mensajes de avisos de archivo malicioso, ya que aparecen debido a que la aplicación no está firmada por Google ni está disponible en la Play Store. 
