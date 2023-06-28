@@ -111,7 +111,15 @@ fun PasswordForgetBody(
                     }
                     LaunchedEffect(Unit) {
                         viewModel.onRecoverPasswordSelected(navigationController)
+                        fireBaseViewModel?.flowReset("recover")
                     }
+                }
+                FireBaseAuthResource.Reset -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ){}
                 }
             }
         }

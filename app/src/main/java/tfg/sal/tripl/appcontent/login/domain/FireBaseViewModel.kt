@@ -1,6 +1,5 @@
 package tfg.sal.tripl.appcontent.login.domain
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
@@ -55,6 +54,15 @@ class FireBaseViewModel @Inject constructor(private val repository: FireBaseAuth
             _recoverPasswordFlow.value = FireBaseAuthResource.Loading
             val result = repository.changePassword(email)
             _recoverPasswordFlow.value = result
+        }
+    }
+
+    fun flowReset(flow: String) {
+        viewModelScope.launch {
+            when (flow) {
+                "login" -> { _loginFlow.value = FireBaseAuthResource.Reset }
+                "recover" -> { _recoverPasswordFlow.value = FireBaseAuthResource.Reset }
+            }
         }
     }
 

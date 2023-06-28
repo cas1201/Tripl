@@ -226,6 +226,11 @@ fun SignUpBody(
                         viewModel.onSignUpSelected(context, navigationController)
                     }
                 }
+                FireBaseAuthResource.Reset -> {
+                    LaunchedEffect(Unit) {
+                        fireBaseViewModel?.flowReset("recover")
+                    }
+                }
             }
         }
     }

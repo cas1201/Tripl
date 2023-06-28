@@ -1,6 +1,7 @@
 package tfg.sal.tripl.appcontent.login.ui
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -132,7 +133,11 @@ fun LoginBody(
             if (loginEnable) {
                 fireBaseViewModel?.login(email, password)
             } else {
-                viewModel.showToast(context, R.string.login_error)
+                if (password.length in 1 until 8) {
+                    viewModel.showToast(context, R.string.password_length)
+                } else {
+                    viewModel.showToast(context, R.string.login_error)
+                }
             }
         }
         /*Spacer(modifier = Modifier.padding(12.dp))
@@ -143,7 +148,9 @@ fun LoginBody(
         loginFlow?.value?.let {
             when (it) {
                 is FireBaseAuthResource.Error -> {
+                    Log.i("TOASTPRUEBA", "Flow")
                     viewModel.showToast(context, R.string.login_error)
+                    fireBaseViewModel?.flowReset("login")
                 }
                 FireBaseAuthResource.Loading -> {
                     Box(
@@ -157,6 +164,11 @@ fun LoginBody(
                 is FireBaseAuthResource.Success -> {
                     LaunchedEffect(Unit) {
                         viewModel.onLoginSelected(navigationController)
+                    }
+                }
+                FireBaseAuthResource.Reset -> {
+                    LaunchedEffect(Unit) {
+                        fireBaseViewModel?.flowReset("recover")
                     }
                 }
             }
